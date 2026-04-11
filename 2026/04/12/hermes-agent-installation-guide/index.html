@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta name="google-site-verification" content="_R3SdmFES3EYcdqrFSKX3auc_KZOcWPM8-0Bb0EmWkY" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="irmenth">
+    
+    <title>
+        
+            Hermes Agent 安装与配置完整指南 |
+        
+        Irmenth&#39;s Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/images/donthurtme.svg">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/brands.min.css">
+    
+        
+            
+                
+<link rel="stylesheet" href="/css/custom.css">
+
+            
+        
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#2ed573","title":"Irmenth's Blog","author":"irmenth","avatar":"/images/sylphiette.svg","logo":"/images/donthurtme.svg","favicon":"/images/donthurtme.svg"},"menu":{"home":"/  || fa-solid fa-home","archives":"/archives  || fa-solid fa-box-archive","about":"/about                || fa-solid fa-user-graduate"},"first_screen":{"enable":true,"description":"Wish you a wonderful day 🥰","hitokoto":false},"social_contact":{"enable":true,"links":{"github":"https://github.com/irmenth","weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"x":null,"facebook":null,"email":null,"reddit":"https://www.reddit.com/user/LKLSTN/submitted/"}},"scroll":{"progress_bar":false,"percent":false,"hide_header":true},"home":{"announcement":null,"category":false,"tag":false,"post_datetime":"updated"},"post":{"author_badge":{"enable":true,"level_badge":true,"custom_badge":["One","Two","Three","Four","Five","Six"]},"word_count":{"wordcount":true,"min2read":false},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":false,"share":true,"reward":{"enable":true,"img_link":"/images/wechat.png","text":"REWARD AUTHOR","icon":null}},"code_block":{"tools":{"enable":true,"style":"mac"},"highlight_theme":"obsidian"},"toc":{"enable":true,"number":true,"expand_all":true,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":false,"site_pv":false,"page_pv":true}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.39"},"waline":{"server_url":null,"reaction":false,"version":"3.3.2"},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2026,"word_count":false,"site_deploy":{"enable":false,"provider":"github","url":null},"record":{"enable":false,"list":[{"code":null,"link":null}]}},"inject":{"enable":true,"css":["/css/custom.css"],"js":[null]},"root":"","source_data":{"icons":{"csdn":{"svg":"<svg t=\"1773656014931\" class=\"icon\" viewBox=\"0 0 1024 1024\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" p-id=\"6566\" width=\"200\" height=\"200\"><path d=\"M512 0c282.784 0 512 229.216 512 512s-229.216 512-512 512S0 794.784 0 512 229.216 0 512 0z m189.952 752l11.2-108.224c-31.904 9.536-100.928 16.128-147.712 16.128-134.464 0-205.728-47.296-195.328-146.304 11.584-110.688 113.152-145.696 232.64-145.696 54.784 0 122.432 8.8 151.296 18.336L768 272.704C724.544 262.24 678.272 256 599.584 256c-203.2 0-388.704 94.88-406.4 263.488C178.336 660.96 303.584 768 535.616 768c80.672 0 138.464-6.432 166.336-16z\" fill=\"#515151\" p-id=\"6567\"></path></svg>","link":"https://blog.csdn.net/weixin_43783428?type=blog"}}},"version":"4.2.5"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+                <a class="logo-image border-box" href="/">
+                    <img src="/images/donthurtme.svg">
+                </a>
+            
+            <a class="site-name border-box" href="/">
+               Irmenth&#39;s Blog
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-home"></i>
+                                
+                                首页
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                
+                                归档
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/about">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                
+                                关于
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-home"></i>
+                                </span>
+                            
+                            首页
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                </span>
+                            
+                            归档
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/about">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                </span>
+                            
+                            关于
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        Hermes Agent 安装与配置完整指南
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/images/sylphiette.svg">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">irmenth</span>
+                                
+                                    <span class="author-badge">Lv1</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2026-04-12 02:45:00</span>
+            </span>
+
+            
+                <span class="meta-info-item post-update-date">
+                    <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                    <span class="datetime" data-updated="Sun Apr 12 2026 04:05:44 GMT+0800">2026-04-12 04:05:44</span>
+                </span>
+            
+        
+
+        
+
+        
+            <span class="post-tag meta-info-item border-box">
+                <ul class="post-tag-ul">
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/Hermes-Agent/">Hermes Agent</a></li>
+                        
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/AI-Agent/">AI Agent</a></li>
+                        
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/">安装教程</a></li>
+                        
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/OpenRouter/">OpenRouter</a></li>
+                        
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/Telegram/">Telegram</a></li>
+                        
+                    
+                </ul>
+            </span>
+        
+
+        
+        
+            <span class="meta-info-item post-wordcount">
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>1.4k 字</span>
+            </span>
+        
+        
+        
+            <span class="meta-info-item post-pv">
+                <i class="icon fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <h1 id="什么是-Hermes-Agent？"><a href="#什么是-Hermes-Agent？" class="headerlink" title="什么是 Hermes Agent？"></a>什么是 Hermes Agent？</h1><p>Hermes Agent 是由 Nous Research 开发的自主 AI 智能体，它不仅仅是一个简单的聊天机器人或 IDE 插件。Hermes Agent 是一个真正的自主代理，它会随着使用时间变得越来越强大。它可以运行在几乎任何地方——从低配置的 $5 VPS 到 GPU 集群，甚至是像 Daytona 或 Modal 这样的服务器less 基础设施（在空闲时几乎不产生费用）。你可以通过 Telegram 与它交谈，而它可能正在一台你从未 SSH 进入过的云虚拟机上工作。</p>
+<p>Hermes Agent 的独特之处在于其内置的学习循环——它能够从经验中创建技能，在使用过程中改进它们，主动推动自己持续学习知识，并且能够随着时间的推移建立起对你的深度理解。</p>
+<h1 id="安装-Hermes-Agent"><a href="#安装-Hermes-Agent" class="headerlink" title="安装 Hermes Agent"></a>安装 Hermes Agent</h1><h2 id="步骤-1：安装-Hermes-Agent"><a href="#步骤-1：安装-Hermes-Agent" class="headerlink" title="步骤 1：安装 Hermes Agent"></a>步骤 1：安装 Hermes Agent</h2><p>Hermes Agent 提供了一键安装脚本，支持 Linux、macOS、WSL2 和 Android（Termux）。</p>
+<p>打开你的终端，运行以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Linux / macOS / WSL2 / Android (Termux)</span></span><br><span class="line">curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>Windows 用户注意</strong>：请先安装 <a class="link"   target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/wsl/install" >WSL2<i class="fas fa-external-link-alt"></i></a>，然后在 WSL2 终端中运行上面的命令。</p>
+</blockquote>
+<p>安装完成后，重新加载你的 shell 配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.bashrc  <span class="comment"># 或者 source ~/.zshrc</span></span><br></pre></td></tr></table></figure>
+
+<p>fish 需要在 config.fish 中设置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fish_add_path <span class="variable">$HOME</span>/.local/bin:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="步骤-2：设置您的-LLM-提供商"><a href="#步骤-2：设置您的-LLM-提供商" class="headerlink" title="步骤 2：设置您的 LLM 提供商"></a>步骤 2：设置您的 LLM 提供商</h2><p>安装完成后，您需要配置一个 LLM 提供商才能使用 Hermes Agent。根据您的需求，您可以选择不同的提供商。</p>
+<p>在本指南中，我们将使用 <strong>OpenRouter</strong> 的免费模型作为主要提供商。</p>
+<h3 id="获取-OpenRouter-API-Key"><a href="#获取-OpenRouter-API-Key" class="headerlink" title="获取 OpenRouter API Key"></a>获取 OpenRouter API Key</h3><ol>
+<li>访问 <a class="link"   target="_blank" rel="noopener" href="https://openrouter.ai/" >OpenRouter 官网<i class="fas fa-external-link-alt"></i></a> 并注册账号</li>
+<li>登录后，前往 <a class="link"   target="_blank" rel="noopener" href="https://openrouter.ai/keys" >API Keys 页面<i class="fas fa-external-link-alt"></i></a></li>
+<li>点击 “Create Key” 创建一个新的 API key</li>
+<li>为您的 key命名（例如 “Hermes Agent”），然后复制生成的 key</li>
+</ol>
+<h3 id="配置-OpenRouter-到-Hermes-Agent"><a href="#配置-OpenRouter-到-Hermes-Agent" class="headerlink" title="配置 OpenRouter 到 Hermes Agent"></a>配置 OpenRouter 到 Hermes Agent</h3><p>如果在安装时跳过了配置，现在可以在终端中运行以下命令来设置 OpenRouter API key：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hermes config <span class="built_in">set</span> OPENROUTER_API_KEY sk-or-your-actual-key-here</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>提示：<code>hermes config set</code> 命令会自动将 API key 保存到 <code>~/.hermes/.env</code> 文件中，这是存储敏感信息的正确位置。</p>
+</blockquote>
+<p>接下来，设置默认使用的模型。OpenRouter 提供许多免费模型可供选择。例如，我们可以使用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hermes model</span><br></pre></td></tr></table></figure>
+
+<p>这将启动一个交互式选择器，让您可以浏览和选择不同的提供商和模型。选择 OpenRouter 后，您可以选择如 <code>anthropic/claude-3-haiku</code>、<code>meta-llama/llama-3-8b-instruct</code> 等免费模型。</p>
+<p>或者，您也可以直接设置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hermes config <span class="built_in">set</span> model anthropic/claude-3-haiku</span><br></pre></td></tr></table></figure>
+
+<h1 id="配置消息网关（Telegram）"><a href="#配置消息网关（Telegram）" class="headerlink" title="配置消息网关（Telegram）"></a>配置消息网关（Telegram）</h1><p>为了能够通过 Telegram 与 Hermes Agent 交互，我们需要创建一个 Telegram Bot 并获取您的 Telegram ID（当然也可以不使用 Telegram，Hermes Agent 也支持微信）。</p>
+<h2 id="创建-Telegram-Bot"><a href="#创建-Telegram-Bot" class="headerlink" title="创建 Telegram Bot"></a>创建 Telegram Bot</h2><ol>
+<li>在 Telegram 中搜索 @BotFather 并开始对话</li>
+<li>发送 <code>/newbot</code> 命令</li>
+<li>按照提示为您的 bot命名（例如 “MyHermesBot”）并设置用户名（必须以 <code>bot</code> 结尾，例如 “MyHermesBot”）</li>
+<li>BotFather 将为您提供一个 HTTP API token，格式如：<code>123456789:AAABBBCCCDDD111222333aaa...</code>  <strong>重要：请妥善保存这个 token，这是您 bot 的密钥！</strong></li>
+</ol>
+<h2 id="获取您的-Telegram-ID"><a href="#获取您的-Telegram-ID" class="headerlink" title="获取您的 Telegram ID"></a>获取您的 Telegram ID</h2><ol>
+<li>在 Telegram 中搜索 @userinfobot 并开始对话</li>
+<li>发送任何消息（例如 <code>/start</code>）</li>
+<li>userinfobot 将回复您的用户信息，包括您的 ID（一个数字，例如 <code>123456789</code>）</li>
+</ol>
+<h2 id="配置-Hermes-Agent-的-Telegram-网关"><a href="#配置-Hermes-Agent-的-Telegram-网关" class="headerlink" title="配置 Hermes Agent 的 Telegram 网关"></a>配置 Hermes Agent 的 Telegram 网关</h2><p>现在，我们需要将这些信息配置到 Hermes Agent 中：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置 Telegram Bot Token</span></span><br><span class="line">hermes config <span class="built_in">set</span> telegram.token 123456789:AAABBBCCCDDD111222333aaa...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置允许的用户 ID（您的 ID）</span></span><br><span class="line">hermes config <span class="built_in">set</span> telegram.allowed_ids 123456789</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>提示：如果您想允许多个用户使用您的 Hermes Agent，可以将多个 ID 用逗号分隔：<code>hermes config set telegram.allowed_ids 123456789,987654321,111222333</code></p>
+</blockquote>
+<h1 id="配置-Fallback-Model（后备模型）"><a href="#配置-Fallback-Model（后备模型）" class="headerlink" title="配置 Fallback Model（后备模型）"></a>配置 Fallback Model（后备模型）</h1><p>为了确保在主要模型遇到问题（如速率限制、服务器错误或认证失败）时 Hermes Agent 能够自动切换到备用模型而不会丢失对话上下文，我们需要配置 fallback model。</p>
+<p>根据官方文档，fallback model 配置需要在 <code>~/.hermes/config.yaml</code> 中添加以下部分：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">fallback_model:</span></span><br><span class="line">  <span class="attr">provider:</span> <span class="string">openrouter</span>                    <span class="comment"># 必需</span></span><br><span class="line">  <span class="attr">model:</span> <span class="string">anthropic/claude-sonnet-4</span>        <span class="comment"># 必需</span></span><br><span class="line">  <span class="comment"># base_url: http://localhost:8000/v1    # 可选，用于自定义端点</span></span><br><span class="line">  <span class="comment"># api_key_env: MY_CUSTOM_KEY           # 可选，自定义端点的 API key 环境变量名</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="步骤：配置-Fallback-Model"><a href="#步骤：配置-Fallback-Model" class="headerlink" title="步骤：配置 Fallback Model"></a>步骤：配置 Fallback Model</h2><ol>
+<li><p>打开配置文件编辑器：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hermes config edit</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在文件末尾添加 fallback_model 配置：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">fallback_model:</span></span><br><span class="line">  <span class="attr">provider:</span> <span class="string">openrouter</span></span><br><span class="line">  <span class="attr">model:</span> <span class="string">anthropic/claude-sonnet-4</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>保存并退出编辑器</p>
+</li>
+</ol>
+<blockquote>
+<p><strong>重要提示</strong>：</p>
+<ul>
+<li><code>provider</code> 和 <code>model</code> 都是必需的字段，缺一不可</li>
+<li>fallback 仅通过 <code>config.yaml</code> 配置，没有对应的环境变量</li>
+<li>当激活时，fallback 会在会话中途切换模型和提供商而不会丢失对话</li>
+<li>每个会话最多只会触发一次 fallback</li>
+<li>支持的提供商包括：openrouter, nous, openai-codex, copilot, copilot-acp, anthropic, huggingface, zai, kimi-coding, minimax, minimax-cn, deepseek, ai-gateway, opencode-zen, opencode-go, kilocode, xiaomi, alibaba, custom</li>
+</ul>
+</blockquote>
+<h2 id="验证配置"><a href="#验证配置" class="headerlink" title="验证配置"></a>验证配置</h2><p>您可以随时检查当前的配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hermes config</span><br></pre></td></tr></table></figure>
+
+<p>这将显示您当前的完整配置，包括 fallback_model 部分。</p>
+<h1 id="开始使用-Hermes-Agent"><a href="#开始使用-Hermes-Agent" class="headerlink" title="开始使用 Hermes Agent"></a>开始使用 Hermes Agent</h1><p>一切配置完成后，您就可以开始使用 Hermes Agent 了！</p>
+<p>在终端中运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hermes chat</span><br></pre></td></tr></table></figure>
+
+<p>这将启动一个交互式聊天会话。如果您已经配置了 Telegram 网关，您也可以在 Telegram 中找到您刚才创建的 bot，发送 <code>/start</code> 开始对话。</p>
+<h1 id="尾声"><a href="#尾声" class="headerlink" title="尾声"></a>尾声</h1><p>听说 Hermes Agent 自带的学习能力很强，等不及要试一下了呢！</p>
+<hr>
+<p><em>本文档基于 Hermes Agent 最新官方文档编写，如有出入，请以官方文档为准。</em></p>
+
+                    
+                </div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                            <ul class="post-tags-box border-box">
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/Hermes-Agent/">Hermes Agent</a>
+                                    </li>
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/AI-Agent/">AI Agent</a>
+                                    </li>
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/">安装教程</a>
+                                    </li>
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/OpenRouter/">OpenRouter</a>
+                                    </li>
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/Telegram/">Telegram</a>
+                                    </li>
+                                
+                            </ul>
+                        
+                    </div>
+                    <div>
+                        
+                            <div class="post-share-container border-box">
+    <ul class="share-list-wrap border-box">
+        <li class="qq share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到 QQ"
+        >
+            <i class="fa-brands fa-qq"></i>
+        </li>
+        <li class="wechat share-item border-box flex-center tooltip tooltip-img"
+            data-tooltip-content="分享到微信"
+            data-tooltip-img-tip="微信扫一扫"
+            data-tooltip-img-style="background-color: #fff; top: -10px; padding: 0.6rem 0.6rem 0.1rem 0.6rem;"
+        >
+            <i class="fa-brands fa-weixin"></i>
+        </li>
+        <li class="weibo share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到微博"
+        >
+            <i class="fa-brands fa-weibo"></i>
+        </li>
+    </ul>
+</div>
+
+                        
+                    </div>
+                </div>
+
+                
+                    
+
+<div class="reward-author-container border-box flex-center">
+    <div class="reward-btn border-box flex-center tooltip tooltip-img"
+            data-tooltip-img-url="/images/wechat.png"
+            data-tooltip-img-trigger="click"
+            data-tooltip-img-style="top: -6px;"
+    >
+        <i class="fa-solid fa-gift"></i>&nbsp;REWARD AUTHOR
+    </div>
+</div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2026/03/17/set-up-openclaw/"
+                                   title="零成本安装配置 OpenClaw，但 OpenClaw 真的是必要的吗？"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">零成本安装配置 OpenClaw，但 OpenClaw 真的是必要的吗？</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc right-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Hermes-Agent%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">什么是 Hermes Agent？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Hermes-Agent"><span class="nav-number">2.</span> <span class="nav-text">安装 Hermes Agent</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4-1%EF%BC%9A%E5%AE%89%E8%A3%85-Hermes-Agent"><span class="nav-number">2.1.</span> <span class="nav-text">步骤 1：安装 Hermes Agent</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4-2%EF%BC%9A%E8%AE%BE%E7%BD%AE%E6%82%A8%E7%9A%84-LLM-%E6%8F%90%E4%BE%9B%E5%95%86"><span class="nav-number">2.2.</span> <span class="nav-text">步骤 2：设置您的 LLM 提供商</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96-OpenRouter-API-Key"><span class="nav-number">2.2.1.</span> <span class="nav-text">获取 OpenRouter API Key</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-OpenRouter-%E5%88%B0-Hermes-Agent"><span class="nav-number">2.2.2.</span> <span class="nav-text">配置 OpenRouter 到 Hermes Agent</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%B6%88%E6%81%AF%E7%BD%91%E5%85%B3%EF%BC%88Telegram%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">配置消息网关（Telegram）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA-Telegram-Bot"><span class="nav-number">3.1.</span> <span class="nav-text">创建 Telegram Bot</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E6%82%A8%E7%9A%84-Telegram-ID"><span class="nav-number">3.2.</span> <span class="nav-text">获取您的 Telegram ID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-Hermes-Agent-%E7%9A%84-Telegram-%E7%BD%91%E5%85%B3"><span class="nav-number">3.3.</span> <span class="nav-text">配置 Hermes Agent 的 Telegram 网关</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-Fallback-Model%EF%BC%88%E5%90%8E%E5%A4%87%E6%A8%A1%E5%9E%8B%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">配置 Fallback Model（后备模型）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%EF%BC%9A%E9%85%8D%E7%BD%AE-Fallback-Model"><span class="nav-number">4.1.</span> <span class="nav-text">步骤：配置 Fallback Model</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E9%85%8D%E7%BD%AE"><span class="nav-number">4.2.</span> <span class="nav-text">验证配置</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8-Hermes-Agent"><span class="nav-number">5.</span> <span class="nav-text">开始使用 Hermes Agent</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B0%BE%E5%A3%B0"><span class="nav-number">6.</span> <span class="nav-text">尾声</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+    &copy;&nbsp;2026
+    
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">irmenth</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+            <li class="tools-item tool-toggle-theme-mode flex-center">
+                <i class="fas fa-moon"></i>
+            </li>
+        
+
+        <!-- rss -->
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Hermes-Agent%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">什么是 Hermes Agent？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Hermes-Agent"><span class="nav-number">2.</span> <span class="nav-text">安装 Hermes Agent</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4-1%EF%BC%9A%E5%AE%89%E8%A3%85-Hermes-Agent"><span class="nav-number">2.1.</span> <span class="nav-text">步骤 1：安装 Hermes Agent</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4-2%EF%BC%9A%E8%AE%BE%E7%BD%AE%E6%82%A8%E7%9A%84-LLM-%E6%8F%90%E4%BE%9B%E5%95%86"><span class="nav-number">2.2.</span> <span class="nav-text">步骤 2：设置您的 LLM 提供商</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96-OpenRouter-API-Key"><span class="nav-number">2.2.1.</span> <span class="nav-text">获取 OpenRouter API Key</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-OpenRouter-%E5%88%B0-Hermes-Agent"><span class="nav-number">2.2.2.</span> <span class="nav-text">配置 OpenRouter 到 Hermes Agent</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%B6%88%E6%81%AF%E7%BD%91%E5%85%B3%EF%BC%88Telegram%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">配置消息网关（Telegram）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA-Telegram-Bot"><span class="nav-number">3.1.</span> <span class="nav-text">创建 Telegram Bot</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E6%82%A8%E7%9A%84-Telegram-ID"><span class="nav-number">3.2.</span> <span class="nav-text">获取您的 Telegram ID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-Hermes-Agent-%E7%9A%84-Telegram-%E7%BD%91%E5%85%B3"><span class="nav-number">3.3.</span> <span class="nav-text">配置 Hermes Agent 的 Telegram 网关</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-Fallback-Model%EF%BC%88%E5%90%8E%E5%A4%87%E6%A8%A1%E5%9E%8B%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">配置 Fallback Model（后备模型）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%EF%BC%9A%E9%85%8D%E7%BD%AE-Fallback-Model"><span class="nav-number">4.1.</span> <span class="nav-text">步骤：配置 Fallback Model</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E9%85%8D%E7%BD%AE"><span class="nav-number">4.2.</span> <span class="nav-text">验证配置</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8-Hermes-Agent"><span class="nav-number">5.</span> <span class="nav-text">开始使用 Hermes Agent</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B0%BE%E5%A3%B0"><span class="nav-number">6.</span> <span class="nav-text">尾声</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+
+<div class="">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/post/toc.min.js"></script>
+        
+
+        <!-- copyright-info -->
+        
+
+        <!-- share -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/post/share.min.js"></script>
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+    
+        
+    
+
+</body>
+</html>

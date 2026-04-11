@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta name="google-site-verification" content="_R3SdmFES3EYcdqrFSKX3auc_KZOcWPM8-0Bb0EmWkY" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="irmenth">
+    
+    <title>
+        
+            RTS 结合 FPS 的 Unity 项目试做日志：Flow Field Path Finding 的实现 |
+        
+        Irmenth&#39;s Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/images/donthurtme.svg">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/brands.min.css">
+    
+        
+            
+                
+<link rel="stylesheet" href="/css/custom.css">
+
+            
+        
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#2ed573","title":"Irmenth's Blog","author":"irmenth","avatar":"/images/sylphiette.svg","logo":"/images/donthurtme.svg","favicon":"/images/donthurtme.svg"},"menu":{"home":"/  || fa-solid fa-home","archives":"/archives  || fa-solid fa-box-archive","about":"/about                || fa-solid fa-user-graduate"},"first_screen":{"enable":true,"description":"Wish you a wonderful day 🥰","hitokoto":false},"social_contact":{"enable":true,"links":{"github":"https://github.com/irmenth","weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"x":null,"facebook":null,"email":null,"reddit":"https://www.reddit.com/user/LKLSTN/submitted/"}},"scroll":{"progress_bar":false,"percent":false,"hide_header":true},"home":{"announcement":null,"category":false,"tag":false,"post_datetime":"updated"},"post":{"author_badge":{"enable":true,"level_badge":true,"custom_badge":["One","Two","Three","Four","Five","Six"]},"word_count":{"wordcount":true,"min2read":false},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":false,"share":true,"reward":{"enable":true,"img_link":"/images/wechat.png","text":"REWARD AUTHOR","icon":null}},"code_block":{"tools":{"enable":true,"style":"mac"},"highlight_theme":"obsidian"},"toc":{"enable":true,"number":true,"expand_all":true,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":false,"site_pv":false,"page_pv":true}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.39"},"waline":{"server_url":null,"reaction":false,"version":"3.3.2"},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2026,"word_count":false,"site_deploy":{"enable":false,"provider":"github","url":null},"record":{"enable":false,"list":[{"code":null,"link":null}]}},"inject":{"enable":true,"css":["/css/custom.css"],"js":[null]},"root":"","source_data":{"icons":{"csdn":{"svg":"<svg t=\"1773656014931\" class=\"icon\" viewBox=\"0 0 1024 1024\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" p-id=\"6566\" width=\"200\" height=\"200\"><path d=\"M512 0c282.784 0 512 229.216 512 512s-229.216 512-512 512S0 794.784 0 512 229.216 0 512 0z m189.952 752l11.2-108.224c-31.904 9.536-100.928 16.128-147.712 16.128-134.464 0-205.728-47.296-195.328-146.304 11.584-110.688 113.152-145.696 232.64-145.696 54.784 0 122.432 8.8 151.296 18.336L768 272.704C724.544 262.24 678.272 256 599.584 256c-203.2 0-388.704 94.88-406.4 263.488C178.336 660.96 303.584 768 535.616 768c80.672 0 138.464-6.432 166.336-16z\" fill=\"#515151\" p-id=\"6567\"></path></svg>","link":"https://blog.csdn.net/weixin_43783428?type=blog"}}},"version":"4.2.5"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+                <a class="logo-image border-box" href="/">
+                    <img src="/images/donthurtme.svg">
+                </a>
+            
+            <a class="site-name border-box" href="/">
+               Irmenth&#39;s Blog
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-home"></i>
+                                
+                                首页
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                
+                                归档
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/about">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                
+                                关于
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-home"></i>
+                                </span>
+                            
+                            首页
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                </span>
+                            
+                            归档
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/about">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                </span>
+                            
+                            关于
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+
+<div class="fade-in-down-animation">
+    <div class="page-template-container border-box keep-container ">
+        <!-- page top -->
+        
+
+        <!-- page bottom -->
+        <div class="page-template-bottom border-box">
+            <!-- use page template -->
+            
+
+            <!-- page content -->
+            <div class="page-content border-box keep-markdown-body ">
+                
+                    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>博主正面临步步紧逼的就业危机，但手上的项目看起来都不够亮眼，所以急需一个相对有技术含量的项目撑场子，于是我们又在这里相遇了。
+此日志系列会记录博主的学习内容与资源来源，同时还有项目内各个板块的实现，或许也会写一点自己对技术点的粗浅理解。</p>
+<p>此篇博客会记录大型 RTS 游戏内单位寻路的一个比较热门的实现方式：流场寻路。下面放上博主学习流场寻路实现的主要来源：<a class="link"   target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=tSe6ZqDKB0Y" >Tutorial - Flow Field Pathfinding in Unity - Turbo Makes Games<i class="fas fa-external-link-alt"></i></a></p>
+<p>好了，活不多说，让我们进入正题吧！</p>
+<h2 id="Flow-Field-Path-Finding-大致介绍"><a href="#Flow-Field-Path-Finding-大致介绍" class="headerlink" title="Flow Field Path Finding 大致介绍"></a>Flow Field Path Finding 大致介绍</h2><p>Flow Field（流场）是一种基于向量场的寻路方案，特别适合大规模单位的移动场景，比如 RTS 游戏中的几百上千个单位同时移动。
+它的核心思想是：<strong>不计算每个单位的完整路径，而是预计算一个”流向场”，每个格子存储一个移动方向，单位只需要根据当前所在位置的向量方向移动即可。</strong>
+这就像水流一样——你不需要计算每条水流的完整路径，只需要知道每个点的水流方向，水自然会流向低处。</p>
+<h3 id="为什么-RTS-需要-Flow-Field？"><a href="#为什么-RTS-需要-Flow-Field？" class="headerlink" title="为什么 RTS 需要 Flow Field？"></a>为什么 RTS 需要 Flow Field？</h3><p>传统的 A* 寻路在少量单位时没问题，但一旦单位数量变得庞大，如果每个单位都独立跑 A*，会带来巨大的计算开销（虽然也有只计算一次 A*，多单位跟随的方法）。
+而 Flow Field 的特点是：</p>
+<ul>
+<li><strong>一次计算，全员使用</strong> —— 计算一次流向场，所有单位共享</li>
+</ul>
+<h3 id="实现-Flow-Field-的基本步骤"><a href="#实现-Flow-Field-的基本步骤" class="headerlink" title="实现 Flow Field 的基本步骤"></a>实现 Flow Field 的基本步骤</h3><ol>
+<li>将地图划分成网格（Grid）</li>
+<li>根据地图地形生成 Cost Map</li>
+<li>当玩家确定此次目的地以后生成 Heat Map</li>
+<li>根据 Heat Map 生成 Flow Field</li>
+</ol>
+<p>这只是博主的实现步骤，仅供参考哦。</p>
+<hr>
+<h2 id="核心代码实现"><a href="#核心代码实现" class="headerlink" title="核心代码实现"></a>核心代码实现</h2><p>好了，闲言少叙，让我们来看看代码是怎么写的！😉</p>
+<h3 id="数据结构定义"><a href="#数据结构定义" class="headerlink" title="数据结构定义"></a>数据结构定义</h3><p>首先我们定义两个关键的 struct：<code>DirectionCell</code>（方向格子）和 <code>ObstacleCell</code>（障碍格子）。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">struct</span> DirectionCell</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> index;           <span class="comment">// 格子索引</span></span><br><span class="line">    <span class="keyword">public</span> float2 worldPos;     <span class="comment">// 世界坐标位置</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> cost;          <span class="comment">// 移动成本（1=普通，2=崎岖，∞=不可通行）</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> heat;          <span class="comment">// 热值：到目标的&quot;距离&quot;（用于 Heat Map）</span></span><br><span class="line">    <span class="keyword">public</span> float2 direction;    <span class="comment">// 方向向量（归一化的移动方向）</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">struct</span> ObstacleCell</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> index;</span><br><span class="line">    <span class="keyword">public</span> float2 worldPos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>DirectionCell</code> 是整个系统的核心，每个格子存储了：</p>
+<ul>
+<li><strong>cost</strong>：移动代价。默认是 1，崎岖地形会变成 2，不可通行地带设为 <code>float.PositiveInfinity</code></li>
+<li><strong>heat</strong>：热值。这个格子和目标点的”距离”（不是实际几何距离，而是经过障碍调整后的”热量”扩散）</li>
+<li><strong>direction</strong>：最终单位应该往哪里走的单位向量</li>
+</ul>
+<h3 id="FlowField-类详解"><a href="#FlowField-类详解" class="headerlink" title="FlowField 类详解"></a>FlowField 类详解</h3><p><code>FlowField</code> 是主要的类，负责所有网格的计算和生成。我们一步步来看。</p>
+<h4 id="构造与初始化"><a href="#构造与初始化" class="headerlink" title="构造与初始化"></a>构造与初始化</h4><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">FlowField</span>(<span class="params">int2 dgSize, <span class="built_in">float</span> dcRadius, int2 ogSize, <span class="built_in">float</span> ocRadius</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">this</span>.dgSize = dgSize;</span><br><span class="line">    <span class="keyword">this</span>.dcRadius = dcRadius;</span><br><span class="line">    dcDiameter = dcRadius * <span class="number">2f</span>;</span><br><span class="line">    directionGrid = <span class="keyword">new</span>(dgSize.x * dgSize.y, Allocator.Persistent);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.ogSize = ogSize;</span><br><span class="line">    <span class="keyword">this</span>.ocRadius = ocRadius;</span><br><span class="line">    ocDiameter = ocRadius * <span class="number">2f</span>;</span><br><span class="line">    obstacleGrid = <span class="keyword">new</span>(ogSize.x * ogSize.y, Allocator.Persistent);</span><br><span class="line"></span><br><span class="line">    cellToUnit = <span class="keyword">new</span>((<span class="built_in">int</span>)<span class="number">8e3</span>f, Allocator.Persistent);</span><br><span class="line">    cellToObstacle = <span class="keyword">new</span>(<span class="number">4</span> * ogSize.x * ogSize.y, Allocator.Persistent);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里用了 <code>NativeArray&lt;T&gt;</code> 和 <code>NativeParallelMultiHashMap&lt;int, int&gt;</code>，这是在 Unity 的 <strong>Burst + Jobs System</strong> 中常用的类型，能够实现高性能并行计算。Allocator.Persistent 表示这些内存不会自动释放，需要我们手动 <code>Dispose()</code>。</p>
+<ul>
+<li><code>directionGrid</code>：存储所有方向格子</li>
+<li><code>obstacleGrid</code>：存储障碍格子（障碍物只需要位置）</li>
+<li><code>cellToUnit</code>：映射哪个格子里有哪些单位（用于单位快速查询）</li>
+<li><code>cellToObstacle</code>：映射哪个格子里有哪些障碍物</li>
+</ul>
+<h4 id="网格生成（GenerateGridBurst）"><a href="#网格生成（GenerateGridBurst）" class="headerlink" title="网格生成（GenerateGridBurst）"></a>网格生成（GenerateGridBurst）</h4><p>首先需要生成最初的网格数据，包括方向格子和障碍格子的基础信息（worldPos 等）：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">GenerateGridBurst</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    DirectionGridGenerationJob dirGridGenJob = <span class="keyword">new</span>(dgSize.y, dcRadius, directionGrid);</span><br><span class="line">    dirGridGenJob.Schedule(dgSize.x * dgSize.y, <span class="number">64</span>).Complete();</span><br><span class="line"></span><br><span class="line">    ObstacleGridGenerationJob obsGridGenJob = <span class="keyword">new</span>(ogSize.y, ocRadius, obstacleGrid);</span><br><span class="line">    obsGridGenJob.Schedule(ogSize.x * ogSize.y, <span class="number">64</span>).Complete();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里使用了 Burst job 并行填充每个格子的坐标和默认值。</p>
+<h4 id="费用场生成（GenerateCostField）"><a href="#费用场生成（GenerateCostField）" class="headerlink" title="费用场生成（GenerateCostField）"></a>费用场生成（GenerateCostField）</h4><p>这是最繁琐的一步。我们需要遍历每个方向格子，检测它是否被障碍物覆盖，从而设置 <code>cost</code>。</p>
+<p><strong>关键策略：sub-cell 九宫格细分</strong></p>
+<p>每个 DG 格子再细分为 3×3 的 sub-cell，通过 <code>Physics.OverlapBox</code> 检测整体碰撞，再对 sub-cell 做射线检测，从而更精确地判断格子是否”大部分”被障碍覆盖。</p>
+<ul>
+<li><strong>Impassible</strong>：若 ≥4 个 sub-cell 被 impassible 层阻挡 → 整格 <code>cost = ∞</code></li>
+<li><strong>Rough</strong>：若 ≥4 个 sub-cell 被 rough 层阻挡 → 整格 <code>cost = 2</code></li>
+</ul>
+<p>优势：避免将边界或部分覆盖的障碍误判为全格障碍，提供更平滑的成本场。</p>
+<h4 id="Heat-Map-生成（GenerateHeatMapBurst）"><a href="#Heat-Map-生成（GenerateHeatMapBurst）" class="headerlink" title="Heat Map 生成（GenerateHeatMapBurst）"></a>Heat Map 生成（GenerateHeatMapBurst）</h4><p>Heat Map 是流场寻路的核心步骤。它模拟热量从目标点向四周扩散的过程，每个格子获得一个 heat 值，heat 越小表示离目标越近。</p>
+<p><strong>算法</strong>：类似 Dijkstra 的带权重 BFS，使用 <code>openList</code> + <code>closeList</code>。</p>
+<p>流程：</p>
+<ol>
+<li>目标格子 <code>heat = 0</code>，入队</li>
+<li>循环出队：对当前格子的 8 个邻居（含对角）尝试松弛<br><code>newHeat = current.heat + neighbor.cost</code></li>
+<li>若新值更小，更新 neighbor.heat 并入队</li>
+<li>直到 <code>openList</code> 为空或找到可达终点</li>
+<li>原地修改 <code>directionGrid</code> 中的 <code>heat</code> 字段</li>
+</ol>
+<p>关键点：使用 <code>NativeQueue</code> 和 <code>NativeArray&lt;byte&gt;</code> 标记列表，全部在 Burst Job 中并行执行。</p>
+<h4 id="Flow-Field-生成（GenerateFlowFieldBurst）"><a href="#Flow-Field-生成（GenerateFlowFieldBurst）" class="headerlink" title="Flow Field 生成（GenerateFlowFieldBurst）"></a>Flow Field 生成（GenerateFlowFieldBurst）</h4><p>有了 heat 值之后，计算每个格子的最终移动方向：取周围 8 个邻居中 heat 最小的方向。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">GenerateFlowFieldBurst</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">int</span> size = dgSize.x * dgSize.y;</span><br><span class="line">    NativeArray&lt;float2&gt; flowDir = <span class="keyword">new</span>(size, Allocator.TempJob);</span><br><span class="line">    FlowFieldJob job = <span class="keyword">new</span>(dgSize, directionGrid, flowDir);</span><br><span class="line">    job.Schedule(size, <span class="number">64</span>).Complete();</span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; size; i++)</span><br><span class="line">        ChangeDirection(i, flowDir[i]);</span><br><span class="line">    flowDir.Dispose();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>FlowFieldJob</code> 并行计算每个格子的方向向量</li>
+<li>不可通行格子的方向保持 <code>(∞, ∞)</code>；目标格子方向为 <code>(0,0)</code>（用 Flag 材质显示）</li>
+</ul>
+<h4 id="障碍物映射（GenerateObstacleMap）"><a href="#障碍物映射（GenerateObstacleMap）" class="headerlink" title="障碍物映射（GenerateObstacleMap）"></a>障碍物映射（GenerateObstacleMap）</h4><p>将动态障碍物（单位、移动物体）记录到 <code>cellToObstacle</code>，以便流场计算时避开。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">GenerateObstacleMap</span>(<span class="params"><span class="built_in">int</span> impassibleLayer</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">int</span> x = <span class="number">0</span>; x &lt; ogSize.x; x++)</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> y = <span class="number">0</span>; y &lt; ogSize.y; y++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">int</span> index = x * ogSize.y + y;</span><br><span class="line">            Vector3 detectPos = <span class="keyword">new</span>(obstacleGrid[index].worldPos.x, <span class="number">-10</span>, obstacleGrid[index].worldPos.y);</span><br><span class="line">            <span class="built_in">int</span> hitCount = Physics.OverlapBoxNonAlloc(detectPos, <span class="keyword">new</span> Vector3(ocRadius, <span class="number">20</span>, ocRadius), ogBoxHitBuffer, Quaternion.identity, <span class="number">1</span> &lt;&lt; impassibleLayer);</span><br><span class="line">            <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; hitCount; i++)</span><br><span class="line">            &#123;</span><br><span class="line">                Collider collider = ogBoxHitBuffer[i];</span><br><span class="line">                <span class="keyword">if</span> (!colliderBuffer.ContainsKey(collider))</span><br><span class="line">                    colliderBuffer[collider] = collider.GetComponent&lt;ObstacleAgent&gt;().id;</span><br><span class="line">                <span class="built_in">int</span> id = colliderBuffer[collider];</span><br><span class="line">                cellToObstacle.Add(index, id);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里维护了一个 <code>colliderBuffer</code> 缓存，避免每次调用 <code>GetComponent&lt;ObstacleAgent&gt;().id</code> 的开销。</p>
+<h3 id="GridController：控制器与交互"><a href="#GridController：控制器与交互" class="headerlink" title="GridController：控制器与交互"></a>GridController：控制器与交互</h3><p><code>GridController</code> 是 MonoBehaviour 脚本，负责把整个系统串联起来，并处理玩家输入。</p>
+<h4 id="初始化流程"><a href="#初始化流程" class="headerlink" title="初始化流程"></a>初始化流程</h4><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Start</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    flowField = <span class="keyword">new</span>(directionGridSize, directionCellRadius, obstacleGridSize, obstacleCellRadius);</span><br><span class="line">    flowField.GenerateGridBurst();</span><br><span class="line">    flowField.GenerateCostField(costLayerMask, impassibleLayer, roughLayer);</span><br><span class="line">    flowField.GenerateObstacleMap(impassibleLayer);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所有初始化在主线程同步执行，使用 Burst Job 加速但 <code>.Complete()</code> 等待完成。</p>
+<h4 id="玩家点击处理"><a href="#玩家点击处理" class="headerlink" title="玩家点击处理"></a>玩家点击处理</h4><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">SetDestination</span>(<span class="params">InputAction.CallbackContext ctx</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    Vector2 mousePos = Pointer.current.position.ReadValue();</span><br><span class="line">    Ray ray = Camera.main.ScreenPointToRay(mousePos);</span><br><span class="line">    <span class="keyword">if</span> (Physics.Raycast(ray, <span class="keyword">out</span> RaycastHit hit, <span class="number">1000f</span>, groundLayerMask))</span><br><span class="line">    &#123;</span><br><span class="line">        float2 hitPoint = <span class="keyword">new</span>(hit.point.x, hit.point.z);</span><br><span class="line">        <span class="built_in">int</span> mouseGridIndex = flowField.WorldToDGIndex(hitPoint);</span><br><span class="line">        <span class="keyword">if</span> (mouseGridIndex == <span class="number">-1</span>) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">        float2 dest = flowField.GenerateHeatMapBurst(mouseGridIndex);</span><br><span class="line">        flowField.GenerateFlowFieldBurst();</span><br><span class="line"></span><br><span class="line">        EventBus.Publish(<span class="keyword">new</span> MoveToEvent(UsefulUtils.Approximately(dest, <span class="keyword">new</span>(<span class="number">-1</span>, <span class="number">-1</span>)) ? hitPoint : dest));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当玩家点击地面时：</p>
+<ol>
+<li>将鼠标位置转换为世界坐标</li>
+<li>转换为方向网格索引</li>
+<li>生成 Heat Map（针对该目标点）</li>
+<li>生成 Flow Field（所有单位共享的方向场）</li>
+<li>发布 <code>MoveToEvent</code> 事件，通知各单位移动</li>
+</ol>
+<p>两个生成步骤使用 Burst Job，总耗时通常 &lt; 10 ms。</p>
+<h4 id="调试可视化"><a href="#调试可视化" class="headerlink" title="调试可视化"></a>调试可视化</h4><p><code>OnDrawGizmos</code> 中用各类材质渲染箭头，显示每个格子的方向。这对调试非常有帮助！</p>
+<hr>
+<h2 id="障碍物系统详解"><a href="#障碍物系统详解" class="headerlink" title="障碍物系统详解"></a>障碍物系统详解</h2><p>障碍物系统是流场寻路中处理地形阻塞的关键组件。主要有三个部分：<code>ObstacleAgent</code>（附加在障碍物上的 MonoBehaviour）、<code>ObstacleData</code>（数据组件）以及 <code>ObstacleRegister</code>（注册与管理映射）。</p>
+<h3 id="几何形状定义"><a href="#几何形状定义" class="headerlink" title="几何形状定义"></a>几何形状定义</h3><p><code>ObstacleData</code> 支持两种形状：</p>
+<ul>
+<li><strong>Circle（圆形）</strong>：中心点 + 半径，表示圆柱状障碍</li>
+<li><strong>Rectangle（矩形）</strong>：中心点 + 尺寸 + 朝向向量，表示轴对齐或旋转的矩形</li>
+</ul>
+<p>流场不能直接用几何形状判断格子是否被占据，而是将每个障碍物在其覆盖的障碍网格单元中注册，然后 <code>cellToObstacle</code> 告诉流场”这些格子里有障碍”。</p>
+<h3 id="注册与注销"><a href="#注册与注销" class="headerlink" title="注册与注销"></a>注册与注销</h3><p><code>ObstacleAgent</code> 在 <code>Awake</code> 中构建 <code>ObstacleData</code>，调用 <code>ObstacleRegister.instance.Register(obstacle)</code> 获取唯一 ID。<code>OnDisable</code> 中自动注销。还订阅 <code>ObstacleRemoveEvent</code> 用于 ID 变更同步，确保状态一致。</p>
+<p><code>ObstacleRegister</code> 维护一个从障碍网格索引到障碍ID列表的映射。初始化时 <code>FlowField.GenerateObstacleMap</code> 扫描所有静态障碍；动态障碍通过 <code>Register</code>&#x2F;<code>Unregister</code> 实时更新。如果障碍移动，<code>ObstacleRegister</code> 会先从旧格子移除，再添加到新格子，保持映射最新。</p>
+<h3 id="与流场的协作"><a href="#与流场的协作" class="headerlink" title="与流场的协作"></a>与流场的协作</h3><p>障碍映射并非直接用于计算流向，而是作为”成本加成”：在 <code>GenerateCostField</code> 阶段，系统检查每个方向格子是否被障碍物覆盖（通过 <code>cellToObstacle</code> 判断），然后根据覆盖的子细胞数提高该格子的 <code>cost</code>。不可通行区域标记为 <code>float.PositiveInfinity</code>，崎岖区域 <code>cost</code> 设为 2。这样 Heat Map 的扩散会自然绕过高成本区域，产生合理的流向。</p>
+<hr>
+<h2 id="单位系统与流场协同"><a href="#单位系统与流场协同" class="headerlink" title="单位系统与流场协同"></a>单位系统与流场协同</h2><p>单位系统是流场实现中”使用”这一端的核心。同样由 ECS+DOTS 构建：<code>UnitAgent</code>（MonoBehaviour 桥接层）、<code>UnitAgentData</code>（纯数据组件）以及 <code>UnitBus</code>（事件总线）。单位通过订阅 <code>MoveToEvent</code> 来响应玩家的移动指令。</p>
+<p>当玩家在地图上点击时，<code>GridController</code> 会执行以下流程：</p>
+<ol>
+<li>将点击的世界坐标转换为方向网格索引</li>
+<li>调用 <code>GenerateHeatMapBurst</code> 计算从目标点出发的热力图</li>
+<li>调用 <code>GenerateFlowFieldBurst</code> 生成每个格子的流向向量</li>
+<li>发布 <code>MoveToEvent</code>，事件中携带目标位置</li>
+</ol>
+<p>所有被选中的单位都会收到该事件。<code>UnitAgent</code> 在回调中只需要记住这个事件——实际上流场已经是全局最新状态，单位只需在每帧 <code>Update</code> 中查询自己当前所在格子的方向，然后沿着该方向前进。</p>
+<p><strong>核心更新逻辑（简化）</strong>：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Update</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (flowField == <span class="literal">null</span>) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    float2 worldPos = <span class="keyword">new</span>(transform.position.x, transform.position.z);</span><br><span class="line">    <span class="built_in">int</span> cellIdx = flowField.WorldToDGIndex(worldPos);</span><br><span class="line">    <span class="keyword">if</span> (cellIdx != <span class="number">-1</span> &amp;&amp; cellIdx != currentCellIdx)</span><br><span class="line">    &#123;</span><br><span class="line">        currentCellIdx = cellIdx;</span><br><span class="line">        direction = flowField.GetDirection(cellIdx); <span class="comment">// 读取预计算的方向向量</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (direction != float2.zero)</span><br><span class="line">        transform.position += (Vector3)(float3)direction * speed * Time.deltaTime;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这种设计的优势在于<strong>单位本身不需要进行任何寻路计算</strong>，它们仅仅是”乘客”，沿着流场这个”river”漂流。极端情况下，即使有成千上万个单位，它们的移动成本也只是每帧一次网格查询和一次向量移动，开销极低。</p>
+<p>当然，光有全局流场还不够——单位之间可能会碰撞。常见的解决方案是在流场之上叠加一个局部避障层，例如使用 <strong>RVO（Reciprocal Velocity Obstacle）</strong> 或者简单的 <strong>分离力</strong>。在 DOTS 中，这些局部行为也可以用 Burst Job 并行处理，每个单位在读取流场方向后，再根据邻近单位的位置微调方向。我们将这些细节留到下一篇博客吧！</p>
+<hr>
+<h2 id="性能瓶颈与优化思路"><a href="#性能瓶颈与优化思路" class="headerlink" title="性能瓶颈与优化思路"></a>性能瓶颈与优化思路</h2><p>虽然流场在大规模单位场景中表现卓越，但在实际项目中仍可能遇到性能瓶颈。以下是几个常见问题及优化方向：</p>
+<ul>
+<li><p><strong>网格分辨率与内存开销</strong>：网格越细，路径越平滑，但计算量和内存占用也越大。一个 256x256 的 <code>DirectionCell</code> 网格（每个 cell 约 16 字节）需要约 1MB 内存，对于移动端可能偏大。建议根据目标平台和地图大小动态调整分辨率，或使用 <strong>分块流场</strong>（chunked flow field）仅在玩家视野附近保持高分辨率。</p>
+</li>
+<li><p><strong>Burst + Jobs 的调度开销</strong>：并行化并非免费。对于小地图（如 32x32），单一 Job 的调度和同步开销可能超过实际计算收益。可以考虑将网格划分成若干子区域，分帧计算，或者只在目的地改变时重新计算流场，而不是每帧都算。</p>
+</li>
+<li><p><strong>动态障碍更新</strong>：如果场景中有大量移动障碍，每帧重新生成障碍映射会非常昂贵。优化思路：</p>
+<ul>
+<li>只在障碍实际改变其占据的网格时才更新映射</li>
+<li>使用 <strong>脏标记系统</strong>，每帧只处理发生变化的障碍</li>
+<li>将动态障碍与静态障碍分开，流场基于静态障碍生成全局方向，动态障碍仅用于局部规避</li>
+</ul>
+</li>
+<li><p><strong>热力图扩散的复杂度</strong>：热力图的扩散算法本质上是带权重的 Dijkstra 或 BFS。如果使用 <code>NativeQueue&lt;int&gt;</code> 作为 open list，每次弹出最小 heat 值需要 O(N) 时间，整体复杂度可能达到 O(N²)。优化方案：</p>
+<ul>
+<li><strong>桶排序法（Bucket）</strong>：因为 heat 通常是整数或离散值，可以用桶队列实现 O(1) 的插入和弹出</li>
+<li><strong>并行扩散</strong>：使用类似 cellular automata 的多轮传播，每轮所有格子根据邻居更新自己，迭代次数约为网格直径</li>
+</ul>
+</li>
+<li><p><strong>多目标场景</strong>：如果多个单位组同时移动到不同目标，传统的做法是为每个目标独立生成一套流场，这可能非常耗时。可以考虑：</p>
+<ul>
+<li><strong>缓存热点目标</strong>：将常见目的地的热力图缓存起来，重复使用</li>
+<li><strong>分层流场</strong>：先在一个低分辨率网格上计算全局流向，再在局部高分辨率网格上微调</li>
+<li><strong>增量更新</strong>：当新目的地与旧目的地相近时，复用部分热力图数据</li>
+</ul>
+</li>
+<li><p><strong>局部避障的计算量</strong>：流场只提供全局路径，单位间碰撞需要额外的局部算法。RVO 虽然效果好，但每单位需要进行 O(N) 的邻域搜索，在单位数量极大时成本高。优化：使用空间分区（Grid&#x2F;Hash）来限制搜索范围，或者每 N 帧才执行一次完整避障计算。</p>
+</li>
+</ul>
+<p>最后，如果以上 CPU 优化还不够，可以考虑 <strong>Compute Shader</strong> 或 <strong>Ray Tracing</strong> 将热力图扩散和方向计算放到 GPU 上执行，尤其适合超大网格。现代 Unity 中，Compute Shader 与 Burst 的组合能带来数倍性能提升，但也增加了代码复杂度——权衡之乐，正是工程之美。</p>
+<hr>
+<h2 id="尾声"><a href="#尾声" class="headerlink" title="尾声"></a>尾声</h2><p>好了，这篇博客的核心内容就算写完了。我们来总结一下：</p>
+<p>✅ <strong>Flow Field 的核心优势</strong>：一次计算，全员使用，特别适合 RTS 中成百上千单位同时移动的场景。</p>
+<p>✅ <strong>技术栈亮点</strong>：</p>
+<ul>
+<li>使用 Unity 的 Burst + Jobs System 并行处理，大大提升性能</li>
+<li>用 NativeArray<T> 和 NativeParallelMultiHashMap 管理内存</li>
+<li>九宫格细分（sub-cell）提高地形检测精度</li>
+</ul>
+<p>✅ <strong>实现流程</strong>：网格生成 → Cost 场 → 障碍物映射 → Heat Map → Flow Field → 单位移动</p>
+<p>博主自己也是在边学边写的过程中逐渐理解这套算法的。如果有什么理解不到位或者错误的地方，欢迎大佬们指正交流～ 😉</p>
+<p>如果你对这套实现感兴趣，建议去看一遍 <a class="link"   target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=tSe6ZqDKB0Y" >Turbo Makes Games 的教程<i class="fas fa-external-link-alt"></i></a>，讲得非常清楚。</p>
+<p>最后，我们还讨论了障碍物系统、单位系统的设计以及性能优化思路，希望这些内容能给你带来帮助。</p>
+<hr>
+<p><strong>项目文件结构</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Assets/Scripts/RTS/</span><br><span class="line">├── FlowFieldPathingFinding/</span><br><span class="line">│   ├── Cells.cs</span><br><span class="line">│   ├── FlowField.cs</span><br><span class="line">│   └── GridController.cs</span><br><span class="line">├── Obstacle/</span><br><span class="line">│   ├── ObstacleAgent.cs</span><br><span class="line">│   ├── ObstacleData.cs</span><br><span class="line">│   └── ObstacleRegister.cs</span><br><span class="line">└── Unit/</span><br><span class="line">    ├── UnitAgent.cs</span><br><span class="line">    ├── UnitAgentData.cs</span><br><span class="line">    ├── UnitBus.cs</span><br><span class="line">    └── UnitRegister.cs</span><br></pre></td></tr></table></figure>
+
+                
+            </div>
+
+            <!-- comment plugin -->
+            
+        </div>
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+    &copy;&nbsp;2026
+    
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">irmenth</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+            <li class="tools-item tool-toggle-theme-mode flex-center">
+                <i class="fas fa-moon"></i>
+            </li>
+        
+
+        <!-- rss -->
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+
+<div class="">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+    
+        
+    
+
+</body>
+</html>

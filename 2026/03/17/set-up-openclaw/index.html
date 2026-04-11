@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta name="google-site-verification" content="_R3SdmFES3EYcdqrFSKX3auc_KZOcWPM8-0Bb0EmWkY" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="irmenth">
+    
+    <title>
+        
+            零成本安装配置 OpenClaw，但 OpenClaw 真的是必要的吗？ |
+        
+        Irmenth&#39;s Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/images/donthurtme.svg">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/brands.min.css">
+    
+        
+            
+                
+<link rel="stylesheet" href="/css/custom.css">
+
+            
+        
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#2ed573","title":"Irmenth's Blog","author":"irmenth","avatar":"/images/sylphiette.svg","logo":"/images/donthurtme.svg","favicon":"/images/donthurtme.svg"},"menu":{"home":"/  || fa-solid fa-home","archives":"/archives  || fa-solid fa-box-archive","about":"/about                || fa-solid fa-user-graduate"},"first_screen":{"enable":true,"description":"Wish you a wonderful day 🥰","hitokoto":false},"social_contact":{"enable":true,"links":{"github":"https://github.com/irmenth","weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"x":null,"facebook":null,"email":null,"reddit":"https://www.reddit.com/user/LKLSTN/submitted/"}},"scroll":{"progress_bar":false,"percent":false,"hide_header":true},"home":{"announcement":null,"category":false,"tag":false,"post_datetime":"updated"},"post":{"author_badge":{"enable":true,"level_badge":true,"custom_badge":["One","Two","Three","Four","Five","Six"]},"word_count":{"wordcount":true,"min2read":false},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":false,"share":true,"reward":{"enable":true,"img_link":"/images/wechat.png","text":"REWARD AUTHOR","icon":null}},"code_block":{"tools":{"enable":true,"style":"mac"},"highlight_theme":"obsidian"},"toc":{"enable":true,"number":true,"expand_all":true,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":false,"site_pv":false,"page_pv":true}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.39"},"waline":{"server_url":null,"reaction":false,"version":"3.3.2"},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":false},"footer":{"since":2026,"word_count":false,"site_deploy":{"enable":false,"provider":"github","url":null},"record":{"enable":false,"list":[{"code":null,"link":null}]}},"inject":{"enable":true,"css":["/css/custom.css"],"js":[null]},"root":"","source_data":{"icons":{"csdn":{"svg":"<svg t=\"1773656014931\" class=\"icon\" viewBox=\"0 0 1024 1024\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" p-id=\"6566\" width=\"200\" height=\"200\"><path d=\"M512 0c282.784 0 512 229.216 512 512s-229.216 512-512 512S0 794.784 0 512 229.216 0 512 0z m189.952 752l11.2-108.224c-31.904 9.536-100.928 16.128-147.712 16.128-134.464 0-205.728-47.296-195.328-146.304 11.584-110.688 113.152-145.696 232.64-145.696 54.784 0 122.432 8.8 151.296 18.336L768 272.704C724.544 262.24 678.272 256 599.584 256c-203.2 0-388.704 94.88-406.4 263.488C178.336 660.96 303.584 768 535.616 768c80.672 0 138.464-6.432 166.336-16z\" fill=\"#515151\" p-id=\"6567\"></path></svg>","link":"https://blog.csdn.net/weixin_43783428?type=blog"}}},"version":"4.2.5"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+                <a class="logo-image border-box" href="/">
+                    <img src="/images/donthurtme.svg">
+                </a>
+            
+            <a class="site-name border-box" href="/">
+               Irmenth&#39;s Blog
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-home"></i>
+                                
+                                首页
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                
+                                归档
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/about">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                
+                                关于
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-home"></i>
+                                </span>
+                            
+                            首页
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                </span>
+                            
+                            归档
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/about">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                </span>
+                            
+                            关于
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        零成本安装配置 OpenClaw，但 OpenClaw 真的是必要的吗？
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/images/sylphiette.svg">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">irmenth</span>
+                                
+                                    <span class="author-badge">Lv1</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2026-03-17 20:40:44</span>
+            </span>
+
+            
+                <span class="meta-info-item post-update-date">
+                    <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                    <span class="datetime" data-updated="Mon Apr 06 2026 20:06:42 GMT+0800">2026-04-06 20:06:42</span>
+                </span>
+            
+        
+
+        
+
+        
+
+        
+        
+            <span class="meta-info-item post-wordcount">
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>2k 字</span>
+            </span>
+        
+        
+        
+            <span class="meta-info-item post-pv">
+                <i class="icon fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>相信大家最近经常听到一个词：龙虾🦞，也就是我们今天的主角：OpenClaw。
+要了解 OpenClaw，我们首先要澄清一个误区：OpenClaw 并不是类似 Qwen 系列或者 GPT 系列的大语言模型（LLM），它本身没有“智能”，而是一个写死的程序。
+OpenClaw 的本质是一个 AI Agent。对比之前的 Agent 产品，它更加轻量化，且不再强依赖云端，倾向于将记忆和数据存储在本地。
+它的爆火或许是一个信号，说明 AI Agent 技术正在逐渐趋于成熟。</p>
+<p>但同时，博主认为，AI Agent 并不像被炒作的那样——“你现在不用就会被淘汰”。
+在博主看来，现阶段 AI Agent 的使用性价比，或许远低于直接去各家 LLM 官网免费试用他们的大模型。
+因为刚才也说过了，AI Agent 本身不是人工智能，它需要连接一个 LLM 作为“大脑”，单独的 Agent 基本上什么都做不了(Agent 的内部规则限制当然对于其使用体验也起到至关重要的作用，但这需要花费比较多的时间和精力去调整)。</p>
+<p>这里就涉及到两个现实问题：首先，各大公司并不一定会开源他们官网上最先进的 LLM；其次，开源的大参数 LLM（16B 往上）在普通人的电脑上基本跑不起来。
+比如 Qwen 的开源系列，一般大家的显存大概在 8G 上下，这个配置大概只能跑得动 9B 参数的模型（或许勉强可以往上一点，但参数越多响应越慢）。
+但很遗憾，如果我们想把 9B 参数大小的 LLM 连上 OpenClaw 进行使用，体验大概率还是不够好。
+刚才不是说可以勉强跑得动吗，为什么现在又不太行了？
+因为 OpenClaw 这种 AI Agent 对 LLM 的调用方式，和我们直接跟 LLM 聊天是不一样的。
+我们输入“你好”，LLM 收到的 prompt 最多是“用户说：你好。你回答：”，或者加上之前的聊天记录。
+但 OpenClaw 会把配置文件里的内容、用户的输入全部打包给到 LLM，而且我们的一次对话，在 OpenClaw 与 LLM 之间可能会进行多次交互。</p>
+<p>既然本地跑不动，那不能使用云端 LLM 吗？
+可以，但是要付费（虽然有免费云端服务，但智能程度有限）。
+而且正如刚才所讲，OpenClaw 每次交互消耗的 Token 数量很多，且一段对话往往涉及多次调用。
+所以这个消费在博主看来，对于日常使用而言是比较夸张的。</p>
+<p>铺垫了这么多，博主主要是想表达一个核心观点：OpenClaw 并不是对所有人都“非装不可”。
+对于计算机软件或互联网行业的从业者来说，学习和研究 OpenClaw 这样的前沿热门软件是很有必要的。这不仅是体验一个新工具，更是为了理解 AI Agent 的架构与逻辑，保持对技术趋势的敏感度，这对职业发展至关重要。
+但对于其他行业的普通人来说，如果你的目的仅仅是出于好奇想“玩一下”，那当然可以尝试；但如果你打算为此真正付出大量的时间去搭建，甚至花费金钱去培养一个专属的 OpenClaw，博主认为目前的性价比并不高。
+或许在未来，低成本的个人 AI Agent 真的会成为我们每个人日常生活中不可分割的一部分，但至少在当下，它并非大众的必需品。</p>
+<p>好了，如果你有耐心看到这里，并且确实属于上述想要“尝鲜”或“学习”的人群，那就让我们继续吧。</p>
+<h2 id="安装配置-OpenClaw"><a href="#安装配置-OpenClaw" class="headerlink" title="安装配置 OpenClaw"></a>安装配置 OpenClaw</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>先把 <a class="link"   target="_blank" rel="noopener" href="https://docs.openclaw.ai/" >OpenClaw的官方文档<i class="fas fa-external-link-alt"></i></a> 给大家。
+这边博主会使用 NPM 带大家安装，如果还没有安装 Node.js，可以到 <a class="link"   target="_blank" rel="noopener" href="https://nodejs.org/zh-cn/download/" >官网<i class="fas fa-external-link-alt"></i></a> 下载安装一下。
+接下来我们使用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g openclaw@latest</span><br></pre></td></tr></table></figure>
+
+<p>来全局安装 OpenClaw。
+完成后输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw --version</span><br></pre></td></tr></table></figure>
+
+<p>来确认是否安装成功。</p>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>终端输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw onboard --install-daemon</span><br></pre></td></tr></table></figure>
+
+<p>就可以进入 OpenClaw 的终端交互式配置界面（如果这里的配置选错了也没有关系，我们后续可以在配置文件进行修改）。
+我们选择 <strong>Quick Start</strong>。
+博主这里的 LLM 供应商选择 <strong>OpenRouter</strong>，选择其他的大家也可以自行配置，流程都是一样的，进入官网，然后 Get API Key，然后填进去就可以了。
+如果想用本地的 LLM，可以选择 Ollama（LLM 不需要再去手动选择调教版本了，但 Ollama 的速度会很慢）或者 vLLM。
+接着会让我们输入 <strong>OpenRouter</strong> 的 API Key。
+我们来到 <a class="link"   target="_blank" rel="noopener" href="https://openrouter.ai/" >OpenRouter的官网<i class="fas fa-external-link-alt"></i></a>，点击 <strong>Get API Key</strong>，然后创建一个复制过来。
+模型的话各位就自行挑选了，可以在 OpenRouter 里面搜索 <strong>free</strong>，然后进行选择。</p>
+<p>接下来配置 Channel，如果各位只需要在网页进行对话那这一步可以跳过。
+这里博主使用 Telegram 进行演示。
+我们选择 Telegram，然后需要输入 Bot API Token。
+我们打开 Telegram，搜索 BotFather（或者点这个 <a class="link"   target="_blank" rel="noopener" href="https://telegram.me/BotFather" >网址<i class="fas fa-external-link-alt"></i></a>）。
+输入 &#x2F;new 根据指引创建一个新的机器人。
+创建完成以后复制他的 API Token 过来。</p>
+<p>接下来配置搜索引擎，博主这里使用 Gemini AI 搜索来做演示。
+首先我们到 <a class="link"   target="_blank" rel="noopener" href="https://aistudio.google.com/app/api-keys" >Gemini API Key<i class="fas fa-external-link-alt"></i></a> 去创建一个新的 API Key（使用默认的也可以），然后复制过来。</p>
+<p>接下来是配置 Skills 和 Hooks，可以直接跳过。</p>
+<p>然后我们就完成了 OpenClaw 的基本配置。
+如果没有自动启动 Gateway 的话我们可以手动输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw gateway</span><br></pre></td></tr></table></figure>
+
+<p>来启动 Gateway 进程，或者使用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw gateway start</span><br></pre></td></tr></table></figure>
+
+<p>来执行 gateway.cmd。
+如果提示权限不够，可以使用管理员模式运行终端。</p>
+<p>接着我们回到 Telegram，搜索我们刚才创建的 Bot，点击底部 <strong>start</strong>，OpenClaw 会给我们发一个配对码，我们使用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openclaw pairing approve telegram 配对码</span><br></pre></td></tr></table></figure>
+
+<p>来进行配对。
+完成后我们的 OpenClaw + Telegram 就已经配对完成了，大家现在可以在 Telegram 内使用我们的 OpenClaw 了。</p>
+<h2 id="Skills-的安装"><a href="#Skills-的安装" class="headerlink" title="Skills 的安装"></a>Skills 的安装</h2><p>有关 Skills 的安装，各位的需求各不相同，所以博主就只推荐比较全面热门的 Skills，剩下的部分，就留给各位自行探索了。
+<strong>提醒</strong>：安装 Skill 时请注意 Skill 的安全性，谨防病毒入侵。</p>
+<h3 id="如何安装-Skills"><a href="#如何安装-Skills" class="headerlink" title="如何安装 Skills"></a>如何安装 Skills</h3><ol>
+<li>通过 <a class="link"   target="_blank" rel="noopener" href="https://clawhub.ai/" >ClawHub官网<i class="fas fa-external-link-alt"></i></a> 下载安装。
+下载解压后放到当前 workspace&#x2F; 目录下的 skills&#x2F; 目录下（如果没有需要自己创建一下）</li>
+<li>通过控制台的 clawhub 进行安装。
+我们可以先输入</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clawhub search 我们想要安装的 skill</span><br></pre></td></tr></table></figure>
+
+<p>来看看有没有我们想要的 Skills，也可以直接在 <a class="link"   target="_blank" rel="noopener" href="https://clawhub.ai/" >ClawHub官网<i class="fas fa-external-link-alt"></i></a> 搜索后复制 Skill 网址末尾的名称到控制台</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clawhub install skill名称</span><br></pre></td></tr></table></figure>
+
+<p>来进行安装
+3. 要想安装 ClawHub 以外的 Skills 的话，我们需要在 GitHub 上找到想要安装的 Skill，然后使用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx skills add github仓库链接</span><br></pre></td></tr></table></figure>
+
+<p>来进行安装。</p>
+<h3 id="推荐的-Skills"><a href="#推荐的-Skills" class="headerlink" title="推荐的 Skills"></a>推荐的 Skills</h3><ol>
+<li><a class="link"   target="_blank" rel="noopener" href="https://clawhub.ai/spclaudehome/skill-vetter" >Skill Vetter<i class="fas fa-external-link-alt"></i></a>。可以审计安装的 Skills 是否安全</li>
+<li><a class="link"   target="_blank" rel="noopener" href="https://clawhub.ai/ivangdavila/self-improving" >Self-Improving + Proactive Agent<i class="fas fa-external-link-alt"></i></a>。帮助 Agent 自动提升的 Skill</li>
+<li><a class="link"   target="_blank" rel="noopener" href="https://clawhub.ai/Jacky1n7/openclaw-tavily-search" >Tavily 搜索<i class="fas fa-external-link-alt"></i></a>。调用 Tavily AI Search 进行网络搜索，Tavily 提供每月 1000 次的免费搜索</li>
+<li><a class="link"   target="_blank" rel="noopener" href="https://clawhub.ai/JimLiuxinghai/find-skills" >Find Skills<i class="fas fa-external-link-alt"></i></a>。可以自动查找需要的 Skills。</li>
+</ol>
+<h2 id="尾声"><a href="#尾声" class="headerlink" title="尾声"></a>尾声</h2><p>至此，我们的 OpenClaw 就已经基本配置完成了，各位如果还想深入探索，可以多去查询 <a class="link"   target="_blank" rel="noopener" href="https://docs.openclaw.ai/" >OpenClaw的官方文档<i class="fas fa-external-link-alt"></i></a>。
+同时在文章的最后，博主还是要提醒大家，OpenClaw 的默认权限很大，一定要小心本地文件被他在默认执行的时候修改掉。</p>
+
+                    
+                </div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                    </div>
+                    <div>
+                        
+                            <div class="post-share-container border-box">
+    <ul class="share-list-wrap border-box">
+        <li class="qq share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到 QQ"
+        >
+            <i class="fa-brands fa-qq"></i>
+        </li>
+        <li class="wechat share-item border-box flex-center tooltip tooltip-img"
+            data-tooltip-content="分享到微信"
+            data-tooltip-img-tip="微信扫一扫"
+            data-tooltip-img-style="background-color: #fff; top: -10px; padding: 0.6rem 0.6rem 0.1rem 0.6rem;"
+        >
+            <i class="fa-brands fa-weixin"></i>
+        </li>
+        <li class="weibo share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到微博"
+        >
+            <i class="fa-brands fa-weibo"></i>
+        </li>
+    </ul>
+</div>
+
+                        
+                    </div>
+                </div>
+
+                
+                    
+
+<div class="reward-author-container border-box flex-center">
+    <div class="reward-btn border-box flex-center tooltip tooltip-img"
+            data-tooltip-img-url="/images/wechat.png"
+            data-tooltip-img-trigger="click"
+            data-tooltip-img-style="top: -6px;"
+    >
+        <i class="fa-solid fa-gift"></i>&nbsp;REWARD AUTHOR
+    </div>
+</div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                            <div class="prev-post">
+                                <a class="prev"
+                                   rel="prev"
+                                   href="/2026/04/12/hermes-agent-installation-guide/"
+                                   title="Hermes Agent 安装与配置完整指南"
+                                >
+                                    <span class="left arrow-icon flex-center">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">Hermes Agent 安装与配置完整指南</span>
+                                        <span class="post-nav-item">上一篇</span>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2026/03/17/set-up-blog/"
+                                   title="零成本搭建自己的博客：基于 Hexo &amp; GitHub Pages"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">零成本搭建自己的博客：基于 Hexo &amp; GitHub Pages</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc right-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE-OpenClaw"><span class="nav-number">2.</span> <span class="nav-text">安装配置 OpenClaw</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">2.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">2.2.</span> <span class="nav-text">配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Skills-%E7%9A%84%E5%AE%89%E8%A3%85"><span class="nav-number">3.</span> <span class="nav-text">Skills 的安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AE%89%E8%A3%85-Skills"><span class="nav-number">3.1.</span> <span class="nav-text">如何安装 Skills</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A8%E8%8D%90%E7%9A%84-Skills"><span class="nav-number">3.2.</span> <span class="nav-text">推荐的 Skills</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%BE%E5%A3%B0"><span class="nav-number">4.</span> <span class="nav-text">尾声</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+    &copy;&nbsp;2026
+    
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">irmenth</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+            <li class="tools-item tool-toggle-theme-mode flex-center">
+                <i class="fas fa-moon"></i>
+            </li>
+        
+
+        <!-- rss -->
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE-OpenClaw"><span class="nav-number">2.</span> <span class="nav-text">安装配置 OpenClaw</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">2.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">2.2.</span> <span class="nav-text">配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Skills-%E7%9A%84%E5%AE%89%E8%A3%85"><span class="nav-number">3.</span> <span class="nav-text">Skills 的安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AE%89%E8%A3%85-Skills"><span class="nav-number">3.1.</span> <span class="nav-text">如何安装 Skills</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A8%E8%8D%90%E7%9A%84-Skills"><span class="nav-number">3.2.</span> <span class="nav-text">推荐的 Skills</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%BE%E5%A3%B0"><span class="nav-number">4.</span> <span class="nav-text">尾声</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+
+<div class="">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/post/toc.min.js"></script>
+        
+
+        <!-- copyright-info -->
+        
+
+        <!-- share -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/post/share.min.js"></script>
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+    
+        
+    
+
+</body>
+</html>
