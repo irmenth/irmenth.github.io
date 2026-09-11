@@ -116,28 +116,30 @@ openclaw pairing approve telegram 配对码
 ### 如何安装 Skills
 
 1. 通过 [ClawHub官网](https://clawhub.ai/) 下载安装。
-下载解压后放到当前 workspace/ 目录下的 skills/ 目录下（如果没有需要自己创建一下）
+   下载解压后放到当前 workspace/ 目录下的 skills/ 目录下（如果没有需要自己创建一下）
+
 2. 通过控制台的 clawhub 进行安装。
-我们可以先输入
+   我们可以先输入
 
-```bash
-clawhub search 我们想要安装的 skill
-```
+   ```bash
+   clawhub search 我们想要安装的 skill
+   ```
 
-来看看有没有我们想要的 Skills，也可以直接在 [ClawHub官网](https://clawhub.ai/) 搜索后复制 Skill 网址末尾的名称到控制台
+   来看看有没有我们想要的 Skills，也可以直接在 [ClawHub官网](https://clawhub.ai/) 搜索后复制 Skill 网址末尾的名称到控制台
 
-```bash
-clawhub install skill名称
-```
+   ```bash
+   clawhub install skill名称
+   ```
 
-来进行安装
+   来进行安装
+
 3. 要想安装 ClawHub 以外的 Skills 的话，我们需要在 GitHub 上找到想要安装的 Skill，然后使用
 
-```bash
-npx skills add github仓库链接
-```
+   ```bash
+   npx skills add github仓库链接
+   ```
 
-来进行安装。
+   来进行安装。
 
 ### 推荐的 Skills
 

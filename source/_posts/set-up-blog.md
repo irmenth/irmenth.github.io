@@ -98,10 +98,10 @@ hexo server
 我们需要在 GitHub 上新建一个仓库，用于 Hexo 将我们的博客部署上去。
 在我们 GitHub 上方选择 **Repositories** 进入我们的仓库页面，右上方选择 **New** 新建一个名为 **username.github.io** 的 **Public** 公开仓库（注意替换仓库名中的 username 为自己的 GitHub 用户名哦😉）。
 
-### 配置 \_config.yml 文件
+### 配置 `_config.yml` 文件
 
-现在我们进入本地的博客根目录下，可以看到名称是 \_config.yml 的文件，这个我们博客的主要配置文件。
-接下来我们修改 deploy 部分（repo 记得替换成你刚才新建的仓库的 URL 哦😉）
+现在我们进入本地的博客根目录下，可以看到名称是 `_config.yml` 的文件，这个我们博客的主要配置文件。
+接下来我们修改 `deploy` 部分（repo 记得替换成你刚才新建的仓库的 URL 哦😉）
 
 ```yml
 deploy:
@@ -120,7 +120,7 @@ hexo clean && hexo deploy
 
 ### 设置 GitHub Pages
 
-进入我们创建的仓库，上方点击 **Settings** 进入仓库设置，左侧找到 **Pages**，**Build and deployment** 下选择 **Deploy from a branch**，选择我们在 \_config.yml 里设置的 branch，然后我们就可以通过 GitHub Pages 给出的网址在线访问到我们的博客了（网址一般是 http://仓库名称/）。
+进入我们创建的仓库，上方点击 **Settings** 进入仓库设置，左侧找到 **Pages**，**Build and deployment** 下选择 **Deploy from a branch**，选择我们在 `_config.yml` 里设置的 branch，然后我们就可以通过 GitHub Pages 给出的网址在线访问到我们的博客了（网址一般是 http://仓库名称/）。
 
 ## 尾声
 
