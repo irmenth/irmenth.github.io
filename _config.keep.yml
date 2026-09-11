@@ -1,0 +1,134 @@
+# Keep theme configuration overrides
+# ---------------------------------------------------------------------------------------
+# This file holds ONLY the site-specific customizations for the Keep theme.
+# It is deep-merged over node_modules/hexo-theme-keep/_config.yml by Hexo
+# (see hexo load_theme_config.js -> config.theme_config).
+#
+# Keep it in the repo root so `npm update hexo-theme-keep` can never wipe
+# these settings. Do NOT edit node_modules/hexo-theme-keep/_config.yml directly.
+#
+# Reference: https://keep-docs.xpoet.cn/
+# ---------------------------------------------------------------------------------------
+
+base_info:
+  primary_color: "#2ed573"
+  title: Irmenth's Blog
+  author: irmenth
+  avatar: /images/sylphiette.svg
+  logo: /images/donthurtme.svg
+  favicon: /images/donthurtme.svg
+
+menu:
+  home: / || fa-solid fa-home
+  archives: /archives || fa-solid fa-box-archive
+  # tags: /tags || fa-solid fa-tags
+  # categories: /categories || fa-solid fa-layer-group
+  # links: /links || fa-solid fa-link
+  # photos: /photos || fa-solid fa-image
+  # tools: /tools || fa-solid fa-tools
+  about: /about || fa-solid fa-user-graduate
+
+first_screen:
+  enable: true
+  description: Wish you a wonderful day 🥰
+  hitokoto: false
+
+social_contact:
+  enable: true
+  links:
+    github: https://github.com/irmenth
+    weixin:
+    qq:
+    weibo:
+    zhihu:
+    twitter:
+    x:
+    facebook:
+    email:
+    reddit: https://www.reddit.com/user/LKLSTN/submitted/
+
+home:
+  announcement:
+  category: false
+  tag: false
+  post_datetime: updated
+
+post:
+  author_badge:
+    enable: true
+    level_badge: true
+    custom_badge: ["One", "Two", "Three", "Four", "Five", "Six"]
+
+  word_count:
+    wordcount: true
+    min2read: false
+
+  datetime_format: "YYYY-MM-DD HH:mm:ss"
+  copyright_info: false
+  share: true
+
+  reward:
+    enable: true
+    img_link: /images/wechat.png
+    text: "REWARD AUTHOR"
+    icon:
+
+code_block:
+  tools:
+    enable: true
+    style: mac
+  highlight_theme: obsidian
+
+toc:
+  enable: true
+  number: true
+  expand_all: true
+  init_open: true
+  layout: right
+
+website_count:
+  busuanzi_count:
+    enable: true
+    site_uv: false
+    site_pv: false
+    page_pv: true
+
+local_search:
+  enable: true
+  preload: true
+
+comment:
+  enable: false
+  use: valine
+
+rss:
+  enable: false
+
+lazyload:
+  enable: false
+
+cdn:
+  enable: true
+  provider: cdnjs
+
+pjax:
+  enable: false
+
+footer:
+  since: 2026
+  word_count: false
+  site_deploy:
+    enable: false
+    provider: github
+    url:
+  record:
+    enable: false
+    list:
+      - code:
+        link:
+
+inject:
+  enable: true
+  css:
+    - /css/custom.css
+  js:
