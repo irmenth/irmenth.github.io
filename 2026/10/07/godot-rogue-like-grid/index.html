@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="irmenth">
+    
+    <title>
+        
+            Godot 肉鸽开发记录：搭一个自己的网格 |
+        
+        Irmenth&#39;s Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/images/donthurtme.svg">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/font/css/brands.min.css">
+    
+        
+            
+        
+            
+                
+<link rel="stylesheet" href="/css/custom.css">
+
+            
+        
+    
+    <script>
+        (function () {
+            let theme = localStorage.getItem('KEEP-THEME-STATUS');
+            let classname = "";
+            if (!theme || (JSON.parse(theme).isAutoTheme)){
+                classname = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? "dark-mode" : "light-mode";
+            }
+            else{
+                classname = JSON.parse(theme).isDark ? "dark-mode" : "light-mode";
+            }
+            document.documentElement.classList.add(classname);
+        })();
+    </script>
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"irmenth.github.io","root":"/","language":"zh-CN"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#2ed573","title":"Irmenth's Blog","author":"irmenth","avatar":"/images/sylphiette.svg","logo":"/images/donthurtme.svg","favicon":"/images/donthurtme.svg"},"menu":{"home":"/ || fa-solid fa-home","archives":"/archives || fa-solid fa-box-archive","about":"/about || fa-solid fa-user-graduate"},"first_screen":{"enable":true,"background_img":"/images/bg.svg","background_img_dark":"/images/bg.svg","description":"Wish you a wonderful day 🥰","hitokoto":false},"social_contact":{"enable":true,"links":{"github":"https://github.com/irmenth","weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"x":null,"facebook":null,"email":null,"reddit":"https://www.reddit.com/user/LKLSTN/submitted/"}},"scroll":{"progress_bar":false,"percent":false,"hide_header":true},"home":{"announcement":null,"category":false,"tag":false,"post_datetime":"updated"},"post":{"author_badge":{"enable":true,"level_badge":true,"custom_badge":["One","Two","Three","Four","Five","Six"]},"word_count":{"wordcount":true,"min2read":false},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":false,"share":true,"reward":{"enable":true,"img_link":"/images/wechat.png","text":"REWARD AUTHOR","icon":null}},"code_block":{"tools":{"enable":true,"style":"mac"},"highlight_theme":"obsidian"},"toc":{"enable":true,"number":true,"expand_all":true,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":false,"site_pv":false,"page_pv":true}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.39"},"waline":{"server_url":null,"reaction":false,"version":"3.3.2"},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs","custom":{"enable":false,"url":null}},"pjax":{"enable":false},"footer":{"since":2026,"word_count":false,"site_deploy":{"enable":false,"provider":"github","url":null},"record":{"enable":false,"list":[{"code":null,"link":null}]}},"inject":{"enable":true,"css":[null,"/css/custom.css"],"js":null},"root":"","search_db_path":"keep-search.json","source_data":{"icons":{"csdn":{"svg":"<svg t=\"1773656014931\" class=\"icon\" viewBox=\"0 0 1024 1024\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" p-id=\"6566\" width=\"200\" height=\"200\"><path d=\"M512 0c282.784 0 512 229.216 512 512s-229.216 512-512 512S0 794.784 0 512 229.216 0 512 0z m189.952 752l11.2-108.224c-31.904 9.536-100.928 16.128-147.712 16.128-134.464 0-205.728-47.296-195.328-146.304 11.584-110.688 113.152-145.696 232.64-145.696 54.784 0 122.432 8.8 151.296 18.336L768 272.704C724.544 262.24 678.272 256 599.584 256c-203.2 0-388.704 94.88-406.4 263.488C178.336 660.96 303.584 768 535.616 768c80.672 0 138.464-6.432 166.336-16z\" fill=\"#515151\" p-id=\"6567\"></path></svg>","link":"https://blog.csdn.net/weixin_43783428?type=blog"}}},"version":"4.3.0"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+                <a class="logo-image border-box" href="/">
+                    <img src="/images/donthurtme.svg">
+                </a>
+            
+            <a class="site-name border-box" href="/">
+               Irmenth&#39;s Blog
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-home"></i>
+                                
+                                首页
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                
+                                归档
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/about">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                
+                                关于
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-home"></i>
+                                </span>
+                            
+                            首页
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                </span>
+                            
+                            归档
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/about">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                </span>
+                            
+                            关于
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        Godot 肉鸽开发记录：搭一个自己的网格
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/images/sylphiette.svg">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">irmenth</span>
+                                
+                                    <span class="author-badge">Lv1</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2026-10-07 01:25:00</span>
+            </span>
+
+            
+                <span class="meta-info-item post-update-date">
+                    <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                    <span class="datetime" data-updated="Wed Oct 07 2026 00:41:29 GMT+0800">2026-10-07 00:41:29</span>
+                </span>
+            
+        
+
+        
+
+        
+            <span class="post-tag meta-info-item border-box">
+                <ul class="post-tag-ul">
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/Godot/">Godot</a></li>
+                        
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/GDScript/">GDScript</a></li>
+                        
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a></li>
+                        
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/%E8%82%89%E9%B8%BD/">肉鸽</a></li>
+                        
+                    
+                </ul>
+            </span>
+        
+
+        
+        
+            <span class="meta-info-item post-wordcount">
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>2.7k 字</span>
+            </span>
+        
+        
+        
+            <span class="meta-info-item post-pv">
+                <i class="icon fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>上一篇记录了博主给项目手搓的那套生命周期，这一篇聊聊目前唯一真正跑起来的东西：网格。</p>
+<p>肉鸽游戏和网格的缘分不用多说，走位、寻路、房间划分、技能范围，最后都要落到「第几行第几列」上。
+Godot 其实自带了 <code>TileMapLayer</code> 和 <code>AStarGrid2D</code>，前者的本职是铺贴图，后者的本职是寻路，都能直接拿来用。
+但博主想要的是一个纯粹的逻辑网格：它不负责长什么样，只负责回答「这个坐标属于哪个格子」「这个格子在世界里的中心在哪」。
+于是就有了这几个很小的类。</p>
+<p>目前它还处在很基础的阶段，只做了三件事：描述自己的尺寸、把世界坐标换算成格子坐标、以及在调试时把自己画出来。
+至于寻路、可行走性、房间生成，都还没轮到它们上场。</p>
+<h2 id="谁管什么"><a href="#谁管什么" class="headerlink" title="谁管什么"></a>谁管什么</h2><p>这一层里一共四个类，各管一段，边界分得很清。</p>
+<ul>
+<li><code>GridConfig</code>：一个 <code>Resource</code>，只放配置。</li>
+<li><code>Grid</code>：网格本体，纯数据加坐标换算。</li>
+<li><code>Cell</code>：单个格子，纯数据。</li>
+<li><code>GridDrawer</code>：调试绘制，唯一跟渲染沾边的那个。</li>
+</ul>
+<p>关系大概是这样。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GridConfig (Resource)  ──初始化──▶  Grid</span><br><span class="line">                                     └── linear_map: Array[Cell]</span><br><span class="line"></span><br><span class="line">GridDrawer (Node2D) ──读取──▶ Grid ──读取──▶ Cell</span><br></pre></td></tr></table></figure>
+
+<p>除了 <code>GridDrawer</code>，前面三个都不继承 <code>Node</code>，也不进场景树。
+它们只是普通对象，谁需要谁就持有。
+这样做的好处是：网格可以脱离场景单独构造和测试，也不需要为了画几条线而多挂一个节点。</p>
+<h2 id="配置与本体分开"><a href="#配置与本体分开" class="headerlink" title="配置与本体分开"></a>配置与本体分开</h2><p>先把配置单独拎出来。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">class_name GridConfig</span><br><span class="line">extends Resource</span><br><span class="line"></span><br><span class="line">@export var grid_size: Vector2i = Vector2i(10, 10)</span><br><span class="line">@export var origin: Vector3 = Vector3.ZERO</span><br><span class="line">@export var cell_radius: float = 0.5</span><br></pre></td></tr></table></figure>
+
+<p>用 <code>Resource</code> 而不是把这些字段直接写在 <code>GridManager</code> 上，原因很直接：<code>Resource</code> 能在编辑器里存成 <code>.tres</code> 文件，改数值不用碰代码，也不用重开项目。</p>
+<p>所以 <code>Grid</code> 的参数全部由构造函数传进来。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">class_name Grid</span><br><span class="line"></span><br><span class="line">var grid_size: Vector2i</span><br><span class="line">var origin: Vector3</span><br><span class="line">var cell_radius: float</span><br><span class="line">var cell_diameter: float</span><br><span class="line">var linear_map: Array[Cell] = []</span><br><span class="line"></span><br><span class="line">func _init(gs: Vector2i, ori: Vector3, cr: float) -&gt; void:</span><br><span class="line">	grid_size = gs</span><br><span class="line">	origin = ori</span><br><span class="line">	cell_radius = cr</span><br><span class="line">	cell_diameter = cr * 2</span><br></pre></td></tr></table></figure>
+
+<p>注意它没有去读配置文件，读配置这件事由 <code>GridManager</code> 在 <code>_initialize</code> 里做。
+<code>Grid</code> 只知道一个尺寸、一个原点、一个半径，剩下的都跟它无关。
+这样将来想做「关卡里不同区域用不同大小的网格」，只要 <code>Grid.new</code> 两次就行，不用动配置类的结构。</p>
+<h2 id="坐标系先定下来"><a href="#坐标系先定下来" class="headerlink" title="坐标系先定下来"></a>坐标系先定下来</h2><p>在写换算之前，得先约定清楚坐标到底怎么摆。</p>
+<p>博主把网格铺在世界空间的 <strong>XZ 平面</strong>上，y 轴专门留给高度。
+也就是说，一个格子的二维坐标 <code>(x, y)</code> 对应到世界空间是 <code>(x, ?, y)</code> 里的 x 和 z，这一点在后面看 <code>v2_to_cell</code> 的时候会体现出来。</p>
+<p>接下来是 <code>origin</code> 的含义。
+它是网格<strong>最小角</strong>的位置，不是中心，也不是第一个格子。
+所以格子 0 的中心并不在 <code>origin</code> 上，而是往里挪了半个格子。</p>
+<p>最后是 <code>cell_radius</code> 这个命名。
+它是格子中心到边的距离，也就是半个边长。
+叫它半径有点随性，不过直径确实是照着它推出来的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cell_diameter = cr * 2</span><br></pre></td></tr></table></figure>
+
+<p>把这三个约定记住，后面的公式基本都能自己推出来。</p>
+<h2 id="把二维索引压成一维"><a href="#把二维索引压成一维" class="headerlink" title="把二维索引压成一维"></a>把二维索引压成一维</h2><p>初始化的时候，博主没有用二维数组，而是把全部格子按行铺进了一维数组里。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">func init_grid() -&gt; void:</span><br><span class="line">	var x: int = 0</span><br><span class="line">	var y: int = 0</span><br><span class="line">	var ws_offset: Vector3 = Vector3.ZERO</span><br><span class="line">	var cell_amount: int = grid_size.x * grid_size.y</span><br><span class="line"></span><br><span class="line">	for i in range(0, cell_amount, 1):</span><br><span class="line">		x = floori(i / grid_size.y)</span><br><span class="line">		y = i % grid_size.y</span><br><span class="line">		ws_offset.x = cell_radius + x * cell_diameter + origin.x</span><br><span class="line">		ws_offset.y = origin.y</span><br><span class="line">		ws_offset.z = cell_radius + y * cell_diameter + origin.z</span><br><span class="line">		linear_map.append(Cell.new(i, ws_offset))</span><br></pre></td></tr></table></figure>
+
+<p>这里有两个点值得说。</p>
+<p>一是索引换算。
+<code>i</code> 是数组下标，要反推出它落在第几行、行内第几个，其实就是「<code>i</code> 里包含了几整行」和「余下几个」。
+所以 <code>x</code> 用整除拿到行数，<code>y</code> 用取余拿到行内偏移。
+需要注意的是<strong>行是沿着 y 方向数的</strong>，所以除数是 <code>grid_size.y</code> 而不是 <code>grid_size.x</code>。
+这一点写反了不会报错，只会让整个网格的行列悄悄对调，是很容易埋很久的那种 bug。</p>
+<p>二是格子中心的计算。
+<code>cell_radius + x * cell_diameter + origin.x</code> 这一串可以拆成三段来读：从原点出发，先走 <code>x</code> 个整格，再多走半个格子把自己挪到格子中间去。</p>
+<p>至于为什么用一维数组，主要是图个方便：<code>linear_map[i]</code> 可以直接拿到格子，不需要写两层下标，后面做遍历和洗牌的时候也顺手。</p>
+<h2 id="从世界坐标找回格子"><a href="#从世界坐标找回格子" class="headerlink" title="从世界坐标找回格子"></a>从世界坐标找回格子</h2><p>有了格子的中心点，反过来问「一个世界坐标落在哪个格子里」就顺理成章了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">## (-1, -1) 代表无效</span><br><span class="line">func v3_to_cell(ws: Vector3) -&gt; Vector2i:</span><br><span class="line">	var cell: Vector2i = Vector2i(-1, -1)</span><br><span class="line">	var relative: Vector3 = ws - origin</span><br><span class="line"></span><br><span class="line">	if relative.x &lt; 0 || relative.z &lt; 0:</span><br><span class="line">		return cell;</span><br><span class="line"></span><br><span class="line">	cell.x = floori(relative.x / cell_diameter)</span><br><span class="line">	cell.y = floori(relative.z / cell_diameter)</span><br><span class="line"></span><br><span class="line">	return cell</span><br></pre></td></tr></table></figure>
+
+<p>推导过程其实就是把刚才的公式倒过来。
+先减去 <code>origin</code> 把原点搬到网格的最小角，再除以 <code>cell_diameter</code> 得到「跨了几个格子」。
+因为格子是从 0 开始编号的，所以对结果取 <code>floori</code>，也就是把小数部分直接丢掉。
+只有在跨过整整一个 <code>cell_diameter</code> 之后，编号才会加一。</p>
+<p>无效值用 <code>(-1, -1)</code> 表示，这一点是从下界判断来的：减完原点之后只要有负数，就说明这个点在网格外面。
+<strong>提醒</strong>：目前只挡住了负方向，也就是最小角之外的部分。
+超出右下角的坐标不会被纠正，也不会报错，会老老实实返回一个越界的格子。
+这块等接上寻路之前得补上，不然查询一个远处的坐标就会拿到一个不存在的格子。</p>
+<p>至于 <code>Vector2</code> 的版本，就只是把二维坐标按约定映射过去。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">## (-1, -1) 代表无效</span><br><span class="line">func v2_to_cell(ws: Vector2) -&gt; Vector2i:</span><br><span class="line">	return v3_to_cell(Vector3(ws.x, 0, ws.y))</span><br></pre></td></tr></table></figure>
+
+<p>这里的 <code>y</code> 直接写死成 0 是安全的，因为 <code>v3_to_cell</code> 压根不看高度，它只关心 x 和 z。</p>
+<h2 id="把它画出来"><a href="#把它画出来" class="headerlink" title="把它画出来"></a>把它画出来</h2><p>数据和换算都有了，但看不见东西总是虚的，所以博主加了一个调试用的绘制器。</p>
+<p>它的做法是不生成任何贴图、不摆任何 Sprite，直接在 <code>_draw</code> 里把网格线画出来。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">func _draw() -&gt; void:</span><br><span class="line">	if !_grid_manager || !_grid || !_main_cam || (_main_cam &amp;&amp; _main_cam.projection != Camera3D.PROJECTION_ORTHOGONAL): return</span><br><span class="line"></span><br><span class="line">	var screen_to_local: Transform2D = self.get_global_transform_with_canvas().affine_inverse()</span><br><span class="line">	var d: float = _grid.cell_diameter</span><br><span class="line">	var y: float = _grid.origin.y</span><br><span class="line">	var min_x: float = _grid.origin.x</span><br><span class="line">	var min_z: float = _grid.origin.z</span><br><span class="line">	var max_x: float = _grid.origin.x + _grid.grid_size.x * d</span><br><span class="line">	var max_z: float = _grid.origin.z + _grid.grid_size.y * d</span><br></pre></td></tr></table></figure>
+
+<p>先把网格的边界算出来。
+<code>min_x</code> &#x2F; <code>min_z</code> 就是原点本身，另一头等于原点加上「格子数 × 直径」，也就是整个网格的边长。</p>
+<p>接下来的思路是：平行 z 轴的线，x 坐标固定；平行 x 轴的线，z 坐标固定。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 平行 z 的线，x 不变</span><br><span class="line">for i in range(_grid.grid_size.x + 1):</span><br><span class="line">	var x: float = min_x + i * d</span><br><span class="line">	_line_points.append(screen_to_local * _main_cam.unproject_position(Vector3(x, y, min_z)))</span><br><span class="line">	_line_points.append(screen_to_local * _main_cam.unproject_position(Vector3(x, y, max_z)))</span><br><span class="line"></span><br><span class="line"># 平行 x 的线，z 不变</span><br><span class="line">for i in range(_grid.grid_size.y + 1):</span><br><span class="line">	var z: float = min_z + i * d</span><br><span class="line">	_line_points.append(screen_to_local * _main_cam.unproject_position(Vector3(min_x, y, z)))</span><br><span class="line">	_line_points.append(screen_to_local * _main_cam.unproject_position(Vector3(max_x, y, z)))</span><br><span class="line"></span><br><span class="line">self.draw_multiline(_line_points, LINE_COLOR)</span><br></pre></td></tr></table></figure>
+
+<p>循环次数都是「格子数 + 1」，因为 20 个格子之间有 21 条线，边界上的那两条不能漏。</p>
+<p>这里最巧的是 <code>unproject_position</code>。
+它的本职是把世界坐标投影到屏幕坐标，按理说跟「画线」是两回事。
+但 <code>Node2D</code> 的 <code>_draw</code> 本来就是在屏幕空间里作画的，所以博主干脆让相机去做投影这件事，自己拿到屏幕坐标之后，再乘上 <code>get_global_transform_with_canvas().affine_inverse()</code> 把屏幕坐标转回节点自己的局部坐标。
+这样就不用自己去推投影矩阵，相机的参数改了什么，网格会跟着一起变。</p>
+<p><strong>提醒</strong>：这也是为什么一开始要判一下相机是不是正交投影。
+透视相机下这套「把平面上的点反投影到屏幕」的算法依然能算，但网格的近大远小会变得很难看，而博主这个项目本来就是俯视固定视角，所以直接要求正交。</p>
+<p>最后是清空再填充。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_line_points.clear()</span><br></pre></td></tr></table></figure>
+
+<p><code>_line_points</code> 是复用的成员数组，每次重绘前清空而不是重新 <code>new</code> 一个，这样每帧的开销稳定，也不至于每帧都重新分配一次内存。</p>
+<p>另外还有一层防御写在函数最开头：<code>_grid_manager</code>、<code>_grid</code>、<code>_main_cam</code> 三个引用都判了一遍。
+它们分别来自配置读取、初始化、以及相机就绪事件，任何一个还没到，这一帧就直接跳过。
+在生命周期还没跑完的时候 <code>_draw</code> 是有可能被调用的，所以这个判断不是多余的。</p>
+<h2 id="只在相机动的时候重绘"><a href="#只在相机动的时候重绘" class="headerlink" title="只在相机动的时候重绘"></a>只在相机动的时候重绘</h2><p>画线的开销不大，但也没有必要每帧都画。
+网格只有在相机移动之后才会在屏幕上错位，所以博主把相机位置缓存了下来。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">func _update(_delta: float) -&gt; void:</span><br><span class="line">	if _cached_cam_pos.is_equal_approx(_main_cam.global_position): return</span><br><span class="line"></span><br><span class="line">	_cached_cam_pos = _main_cam.global_position</span><br><span class="line">	self.queue_redraw()</span><br></pre></td></tr></table></figure>
+
+<p><code>queue_redraw()</code> 只是请求一次重绘，真正画不画由引擎决定，但一直请求的话它会每帧都画。
+判断用 <code>is_equal_approx</code> 而不是 <code>==</code>，是因为浮点位置几乎不会精确相等。</p>
+<p>相机什么时候就绪，同样要靠事件来通知。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">func _event_subscribe() -&gt; void:</span><br><span class="line">	GlobalEventManager.cached_instance.main_camera_readied.connect(_cache_main_cam)</span><br></pre></td></tr></table></figure>
+
+<p>相机在场景里就被标成了 <code>current</code>，再由一个胶水节点在 <code>_ready</code> 之后延迟一帧把它抛出来。
+绘制器收到之后缓存下相机对象，顺便请求一次重绘。
+这就是上一篇里那套生命周期真正派上用场的地方：订阅写在 <code>_event_subscribe</code>，退订写在 <code>_event_unsubscribe</code>，谁先谁后一目了然。</p>
+<h2 id="尾声"><a href="#尾声" class="headerlink" title="尾声"></a>尾声</h2><p>到这一步，网格算是能看、能用、也能查了。
+它做的事情不复杂，但如果一开始没把坐标系和方向约定清楚，后面每加一个功能都要重新推一遍公式。
+所以博主特别想强调这一点：<strong>先把约定写在注释里，再写代码</strong>。</p>
+<p>下一步博主打算把 <code>Grid</code> 真正用起来，先是可行走性，让每个格子记录自己能不能通过，然后再上 A* 寻路。
+现在配置文件叫 <code>astar_grid_config.tres</code>，其实就是为了这一步预留的。</p>
+<p>各位如果也想自己搭网格，建议先别急着写寻路。
+先把「世界坐标 ↔ 格子坐标」这一对函数写稳，再写几个用例验证一遍边界，后面会省很多事😉</p>
+
+                    
+                </div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                            <ul class="post-tags-box border-box">
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/Godot/">Godot</a>
+                                    </li>
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/GDScript/">GDScript</a>
+                                    </li>
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a>
+                                    </li>
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/%E8%82%89%E9%B8%BD/">肉鸽</a>
+                                    </li>
+                                
+                            </ul>
+                        
+                    </div>
+                    <div>
+                        
+                            <div class="post-share-container border-box">
+    <ul class="share-list-wrap border-box">
+        <li class="qq share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到 QQ"
+        >
+            <i class="fa-brands fa-qq"></i>
+        </li>
+        <li class="wechat share-item border-box flex-center tooltip tooltip-img"
+            data-tooltip-content="分享到微信"
+            data-tooltip-img-tip="微信扫一扫"
+            data-tooltip-img-style="background-color: #fff; top: -10px; padding: 0.6rem 0.6rem 0.1rem 0.6rem;"
+        >
+            <i class="fa-brands fa-weixin"></i>
+        </li>
+        <li class="weibo share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到微博"
+        >
+            <i class="fa-brands fa-weibo"></i>
+        </li>
+    </ul>
+</div>
+
+                        
+                    </div>
+                </div>
+
+                
+                    
+
+<div class="reward-author-container border-box flex-center">
+    <div class="reward-btn border-box flex-center tooltip tooltip-img"
+            data-tooltip-img-url="/images/wechat.png"
+            data-tooltip-img-trigger="click"
+            data-tooltip-img-style="top: -6px;"
+    >
+        <i class="fa-solid fa-gift"></i>&nbsp;REWARD AUTHOR
+    </div>
+</div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2026/10/07/godot-rogue-like-life-cycle/"
+                                   title="Godot 肉鸽开发记录：手搓一套统一的生命周期"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">Godot 肉鸽开发记录：手搓一套统一的生命周期</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc right-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%81%E7%AE%A1%E4%BB%80%E4%B9%88"><span class="nav-number">2.</span> <span class="nav-text">谁管什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E4%B8%8E%E6%9C%AC%E4%BD%93%E5%88%86%E5%BC%80"><span class="nav-number">3.</span> <span class="nav-text">配置与本体分开</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9D%90%E6%A0%87%E7%B3%BB%E5%85%88%E5%AE%9A%E4%B8%8B%E6%9D%A5"><span class="nav-number">4.</span> <span class="nav-text">坐标系先定下来</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E4%BA%8C%E7%BB%B4%E7%B4%A2%E5%BC%95%E5%8E%8B%E6%88%90%E4%B8%80%E7%BB%B4"><span class="nav-number">5.</span> <span class="nav-text">把二维索引压成一维</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E4%B8%96%E7%95%8C%E5%9D%90%E6%A0%87%E6%89%BE%E5%9B%9E%E6%A0%BC%E5%AD%90"><span class="nav-number">6.</span> <span class="nav-text">从世界坐标找回格子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E5%AE%83%E7%94%BB%E5%87%BA%E6%9D%A5"><span class="nav-number">7.</span> <span class="nav-text">把它画出来</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AA%E5%9C%A8%E7%9B%B8%E6%9C%BA%E5%8A%A8%E7%9A%84%E6%97%B6%E5%80%99%E9%87%8D%E7%BB%98"><span class="nav-number">8.</span> <span class="nav-text">只在相机动的时候重绘</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%BE%E5%A3%B0"><span class="nav-number">9.</span> <span class="nav-text">尾声</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+    &copy;&nbsp;2026
+    
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">irmenth</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+            <li class="tools-item tool-toggle-theme-mode flex-center">
+                <i class="fas fa-moon"></i>
+            </li>
+        
+
+        <!-- rss -->
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%81%E7%AE%A1%E4%BB%80%E4%B9%88"><span class="nav-number">2.</span> <span class="nav-text">谁管什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E4%B8%8E%E6%9C%AC%E4%BD%93%E5%88%86%E5%BC%80"><span class="nav-number">3.</span> <span class="nav-text">配置与本体分开</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9D%90%E6%A0%87%E7%B3%BB%E5%85%88%E5%AE%9A%E4%B8%8B%E6%9D%A5"><span class="nav-number">4.</span> <span class="nav-text">坐标系先定下来</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E4%BA%8C%E7%BB%B4%E7%B4%A2%E5%BC%95%E5%8E%8B%E6%88%90%E4%B8%80%E7%BB%B4"><span class="nav-number">5.</span> <span class="nav-text">把二维索引压成一维</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E4%B8%96%E7%95%8C%E5%9D%90%E6%A0%87%E6%89%BE%E5%9B%9E%E6%A0%BC%E5%AD%90"><span class="nav-number">6.</span> <span class="nav-text">从世界坐标找回格子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%8A%E5%AE%83%E7%94%BB%E5%87%BA%E6%9D%A5"><span class="nav-number">7.</span> <span class="nav-text">把它画出来</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AA%E5%9C%A8%E7%9B%B8%E6%9C%BA%E5%8A%A8%E7%9A%84%E6%97%B6%E5%80%99%E9%87%8D%E7%BB%98"><span class="nav-number">8.</span> <span class="nav-text">只在相机动的时候重绘</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%BE%E5%A3%B0"><span class="nav-number">9.</span> <span class="nav-text">尾声</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+
+<div class="">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/post/toc.min.js"></script>
+        
+
+        <!-- copyright-info -->
+        
+
+        <!-- share -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/post/share.min.js"></script>
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+    
+
+</body>
+</html>

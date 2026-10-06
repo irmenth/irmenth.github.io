@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="irmenth">
+    
+    <title>
+        
+            Godot 肉鸽开发记录：手搓一套统一的生命周期 |
+        
+        Irmenth&#39;s Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+        <link rel="shortcut icon" href="/images/donthurtme.svg">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/font/css/brands.min.css">
+    
+        
+            
+        
+            
+                
+<link rel="stylesheet" href="/css/custom.css">
+
+            
+        
+    
+    <script>
+        (function () {
+            let theme = localStorage.getItem('KEEP-THEME-STATUS');
+            let classname = "";
+            if (!theme || (JSON.parse(theme).isAutoTheme)){
+                classname = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? "dark-mode" : "light-mode";
+            }
+            else{
+                classname = JSON.parse(theme).isDark ? "dark-mode" : "light-mode";
+            }
+            document.documentElement.classList.add(classname);
+        })();
+    </script>
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"irmenth.github.io","root":"/","language":"zh-CN"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#2ed573","title":"Irmenth's Blog","author":"irmenth","avatar":"/images/sylphiette.svg","logo":"/images/donthurtme.svg","favicon":"/images/donthurtme.svg"},"menu":{"home":"/ || fa-solid fa-home","archives":"/archives || fa-solid fa-box-archive","about":"/about || fa-solid fa-user-graduate"},"first_screen":{"enable":true,"background_img":"/images/bg.svg","background_img_dark":"/images/bg.svg","description":"Wish you a wonderful day 🥰","hitokoto":false},"social_contact":{"enable":true,"links":{"github":"https://github.com/irmenth","weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"x":null,"facebook":null,"email":null,"reddit":"https://www.reddit.com/user/LKLSTN/submitted/"}},"scroll":{"progress_bar":false,"percent":false,"hide_header":true},"home":{"announcement":null,"category":false,"tag":false,"post_datetime":"updated"},"post":{"author_badge":{"enable":true,"level_badge":true,"custom_badge":["One","Two","Three","Four","Five","Six"]},"word_count":{"wordcount":true,"min2read":false},"datetime_format":"YYYY-MM-DD HH:mm:ss","copyright_info":false,"share":true,"reward":{"enable":true,"img_link":"/images/wechat.png","text":"REWARD AUTHOR","icon":null}},"code_block":{"tools":{"enable":true,"style":"mac"},"highlight_theme":"obsidian"},"toc":{"enable":true,"number":true,"expand_all":true,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":false,"site_pv":false,"page_pv":true}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.39"},"waline":{"server_url":null,"reaction":false,"version":"3.3.2"},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":false},"lazyload":{"enable":false},"cdn":{"enable":true,"provider":"cdnjs","custom":{"enable":false,"url":null}},"pjax":{"enable":false},"footer":{"since":2026,"word_count":false,"site_deploy":{"enable":false,"provider":"github","url":null},"record":{"enable":false,"list":[{"code":null,"link":null}]}},"inject":{"enable":true,"css":[null,"/css/custom.css"],"js":null},"root":"","search_db_path":"keep-search.json","source_data":{"icons":{"csdn":{"svg":"<svg t=\"1773656014931\" class=\"icon\" viewBox=\"0 0 1024 1024\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" p-id=\"6566\" width=\"200\" height=\"200\"><path d=\"M512 0c282.784 0 512 229.216 512 512s-229.216 512-512 512S0 794.784 0 512 229.216 0 512 0z m189.952 752l11.2-108.224c-31.904 9.536-100.928 16.128-147.712 16.128-134.464 0-205.728-47.296-195.328-146.304 11.584-110.688 113.152-145.696 232.64-145.696 54.784 0 122.432 8.8 151.296 18.336L768 272.704C724.544 262.24 678.272 256 599.584 256c-203.2 0-388.704 94.88-406.4 263.488C178.336 660.96 303.584 768 535.616 768c80.672 0 138.464-6.432 166.336-16z\" fill=\"#515151\" p-id=\"6567\"></path></svg>","link":"https://blog.csdn.net/weixin_43783428?type=blog"}}},"version":"4.3.0"}
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"}
+    KEEP.language_code_block = {"copy":"复制代码","copied":"已复制","fold":"折叠代码块","folded":"已折叠"}
+    KEEP.language_copy_copyright = {"copy":"复制版权信息","copied":"已复制","title":"原文标题","author":"原文作者","link":"原文链接"}
+  </script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+                <a class="logo-image border-box" href="/">
+                    <img src="/images/donthurtme.svg">
+                </a>
+            
+            <a class="site-name border-box" href="/">
+               Irmenth&#39;s Blog
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-home"></i>
+                                
+                                首页
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                
+                                归档
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/about">
+                                
+                                    <i class="menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                
+                                关于
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-home"></i>
+                                </span>
+                            
+                            首页
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-box-archive"></i>
+                                </span>
+                            
+                            归档
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/about">
+                            
+                                <span class="menu-icon-wrap border-box flex-center">
+                                    <i class="drawer-menu-text-color menu-icon fa-solid fa-user-graduate"></i>
+                                </span>
+                            
+                            关于
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        Godot 肉鸽开发记录：手搓一套统一的生命周期
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="/images/sylphiette.svg">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">irmenth</span>
+                                
+                                    <span class="author-badge">Lv1</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2026-10-07 00:35:00</span>
+            </span>
+
+            
+                <span class="meta-info-item post-update-date">
+                    <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                    <span class="datetime" data-updated="Wed Oct 07 2026 00:41:34 GMT+0800">2026-10-07 00:41:34</span>
+                </span>
+            
+        
+
+        
+
+        
+            <span class="post-tag meta-info-item border-box">
+                <ul class="post-tag-ul">
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/Godot/">Godot</a></li>
+                        
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/GDScript/">GDScript</a></li>
+                        
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a></li>
+                        
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/%E8%82%89%E9%B8%BD/">肉鸽</a></li>
+                        
+                    
+                </ul>
+            </span>
+        
+
+        
+        
+            <span class="meta-info-item post-wordcount">
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>2.9k 字</span>
+            </span>
+        
+        
+        
+            <span class="meta-info-item post-pv">
+                <i class="icon fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>博主最近开了个新坑，打算用 Godot 做一款小体量的肉鸽游戏。
+项目目前还处在很基础的阶段，能跑起来的东西不多，摆在最前面的反而是地基。
+这篇记录想聊的就是这块地基里比较核心的一层：一套自己写的生命周期。</p>
+<p>Godot 自带的 <code>_ready</code>、<code>_process</code>、<code>_physics_process</code>、<code>_exit_tree</code> 其实已经够用。
+但项目一变大，博主就发现有三个问题会同时冒出来：初始化顺序靠人肉记忆、销毁时机靠自觉、同一套流程被复制很多遍。
+所以博主决定不去跟引擎对着干，而是在它上面套一层很薄的壳，把「什么时候该做什么」固定成契约。</p>
+<p>好了，闲言少叙，让我们开始吧！</p>
+<h2 id="整体结构"><a href="#整体结构" class="headerlink" title="整体结构"></a>整体结构</h2><p>这层壳由三部分组成。</p>
+<ul>
+<li><code>LifeCycleEntity</code>：一个 <code>RefCounted</code> 的代理，持有宿主，负责记录状态并把调用转发给宿主。</li>
+<li><code>LifeCycle2D</code> &#x2F; <code>LifeCycle3D</code>：宿主的抽象基类，声明需要重写的方法。</li>
+<li><code>LifeCycleController</code>：根控制器，负责注册实体并驱动它们。</li>
+</ul>
+<p>把它们串起来，目前项目里的结构大概是这样。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">LifeCycleController</span><br><span class="line">├── ManagerController</span><br><span class="line">│   ├── GlobalEventManager</span><br><span class="line">│   ├── GridManager</span><br><span class="line">│   └── EnemySpawnManager</span><br><span class="line">└── DebuggerController</span><br><span class="line">    └── GridDrawer</span><br></pre></td></tr></table></figure>
+
+<p>挂在场景上的节点里，只有 <code>LifeCycleController</code> 参与这套生命周期，剩下的控制器都是它自己 <code>new</code> 出来再注册进去的。
+换句话说，整个游戏里需要被生命周期管理的对象，都挂在这一棵树上。</p>
+<h2 id="阶段是怎么划分的"><a href="#阶段是怎么划分的" class="headerlink" title="阶段是怎么划分的"></a>阶段是怎么划分的</h2><p>这套生命周期一共划分了六个阶段，调用顺序是固定的。</p>
+<ul>
+<li><code>_before_entity_instantiate</code>：实体刚被构造出来，宿主拿到自己的实体的时刻。</li>
+<li><code>_event_subscribe</code>：连接信号、注册监听。</li>
+<li><code>_initialize</code>：真正的初始化，此时该在的东西都已经在树上了。</li>
+<li><code>_update</code> &#x2F; <code>_fixed_update</code>：每帧与每物理帧。</li>
+<li><code>_event_unsubscribe</code>：断开订阅。</li>
+<li><code>_before_destroyed</code>：对象即将被释放前的最后一件事。</li>
+</ul>
+<p>下面逐个说说每个阶段放在哪里、为什么放在那里。</p>
+<h3 id="before-entity-instantiate"><a href="#before-entity-instantiate" class="headerlink" title="_before_entity_instantiate"></a><code>_before_entity_instantiate</code></h3><p>第一个阶段和 GDScript 的 <code>_init</code> 有关系。
+<code>LifeCycleEntity</code> 在自己的构造函数里会立刻回调宿主的 <code>_before_entity_instantiate</code>，并且把 <code>self</code> 传进去。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">func _init(p_host: Object) -&gt; void:</span><br><span class="line">    host = p_host</span><br><span class="line">    _host_name = p_host.name if p_host is Node else p_host.get_class()</span><br><span class="line">    host.call(&amp;&quot;_before_entity_instantiate&quot;, self)</span><br></pre></td></tr></table></figure>
+
+<p>所以宿主在这个阶段要做的第一件事，就是把 <code>life_entity</code> 存下来：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">func _before_entity_instantiate(p_entity: LifeCycleEntity) -&gt; void:</span><br><span class="line">    life_entity = p_entity</span><br><span class="line">    self.name = &amp;&quot;GridManager&quot;</span><br><span class="line">    if !_cache_instance(): return</span><br></pre></td></tr></table></figure>
+
+<p>这里博主顺手把「改名」和「缓存单例」也一起做了。
+原因是不管后面走不走得到 <code>_initialize</code>，这个对象的身份（名字、是不是那个唯一的单例）都得先确定下来。
+尤其是重复实例的情况，早点发现就能早点把自己干掉，不用白跑一遍初始化。</p>
+<p>顺带一提，这个阶段之所以不能塞进宿主自己的 <code>_init</code> 里，是因为宿主的 <code>_init</code> 在 <code>new()</code> 的瞬间就跑完了，那时候 <code>life_entity</code> 这个基类字段还是空的。
+由实体的构造函数回头来调用宿主，顺序才是对的。</p>
+<h3 id="event-subscribe"><a href="#event-subscribe" class="headerlink" title="_event_subscribe"></a><code>_event_subscribe</code></h3><p>这一阶段只管把信号连上，断开交给对应的 <code>_event_unsubscribe</code>。
+以项目里的调试网格绘制器为例。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">func _event_subscribe() -&gt; void:</span><br><span class="line">    GlobalEventManager.cached_instance.main_camera_readied.connect(_cache_main_cam)</span><br><span class="line"></span><br><span class="line">func _event_unsubscribe() -&gt; void:</span><br><span class="line">    GlobalEventManager.cached_instance.main_camera_readied.disconnect(_cache_main_cam)</span><br></pre></td></tr></table></figure>
+
+<p>连接和断开被拆成两个阶段，而不是塞进 <code>_ready</code> 和 <code>_exit_tree</code>。
+因为在这套生命周期里，离开树的时刻和销毁的时刻是两件事。
+对象可能先出树、过一会儿才被销毁，也可能压根没进过树就被销毁了，所以订阅和退订必须各自独立、并且成对出现。</p>
+<p><code>_event_subscribe</code> 里直接用的是 <code>GlobalEventManager.cached_instance</code>，能不能拿到东西完全看注册顺序。
+也就是说，订阅阶段虽然只有一句 <code>connect</code>，但它其实已经被顺序约束住了：谁先被注册，谁就先连上信号。</p>
+<h3 id="initialize"><a href="#initialize" class="headerlink" title="_initialize"></a><code>_initialize</code></h3><p>真正的初始化放在这里。
+此时对象已经在树上了，拿单例、读配置、建数据都可以放心去做了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">func _initialize() -&gt; void:</span><br><span class="line">    astar_grid = Grid.new(ASTAR_GRID_CONFIG.grid_size, ASTAR_GRID_CONFIG.origin, ASTAR_GRID_CONFIG.cell_radius)</span><br><span class="line">    astar_grid.init_grid()</span><br></pre></td></tr></table></figure>
+
+<p>这里有个很容易被忽略的点：<code>GridDrawer</code> 在初始化时要拿 <code>GridManager</code>，而这两个宿主并不在同一个控制器里。
+<code>GridManager</code> 归 <code>ManagerController</code> 管，<code>GridDrawer</code> 归 <code>DebuggerController</code> 管，所以顺序约束是跨层级的，最终由控制器列表和每一层的宿主列表共同决定。
+那两个 <code>Array</code> 不是随便排的，它是这套框架里唯一一份「谁先谁后」的声明。</p>
+<h3 id="update-与-fixed-update"><a href="#update-与-fixed-update" class="headerlink" title="_update 与 _fixed_update"></a><code>_update</code> 与 <code>_fixed_update</code></h3><p>这两个阶段只是转发，宿主自己去实现真正的逻辑。
+需要注意的是 <code>_fixed_update</code> 走的是物理帧，跟 <code>_update</code> 不是同一个时间轴，别把需要稳帧的东西塞进 <code>_update</code>。</p>
+<p>项目里 <code>GridDrawer</code> 用它来做一件很有意思的事：只在相机移动过的时候才重新画一遍。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">func _update(_delta: float) -&gt; void:</span><br><span class="line">    if _cached_cam_pos.is_equal_approx(_main_cam.global_position): return</span><br><span class="line"></span><br><span class="line">    _cached_cam_pos = _main_cam.global_position</span><br><span class="line">    self.queue_redraw()</span><br></pre></td></tr></table></figure>
+
+<p>这个阶段还有一个隐藏约束：销毁之后的 <code>update</code> 会被静默跳过。
+也就是说宿主不需要在 <code>_update</code> 里自己判断「我是不是已经死了」。</p>
+<h3 id="before-destroyed"><a href="#before-destroyed" class="headerlink" title="_before_destroyed"></a><code>_before_destroyed</code></h3><p>对象即将被释放前的最后一件事。
+单例宿主在这里做一件很关键的事，把自己的缓存置空。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">func _before_destroyed() -&gt; void:</span><br><span class="line">    if _cached_instance == self:</span><br><span class="line">        _cached_instance = null</span><br></pre></td></tr></table></figure>
+
+<p>如果不置空，静态变量就会一直指着一个已经被释放的对象。
+虽然 <code>cached_instance</code> 的 getter 里做了 <code>is_instance_valid</code> 判断兜底，但那是补救，不是设计。</p>
+<h2 id="谁在转发这些阶段"><a href="#谁在转发这些阶段" class="headerlink" title="谁在转发这些阶段"></a>谁在转发这些阶段</h2><p>阶段是宿主实现的，但顺序和状态是 <code>LifeCycleEntity</code> 管的。
+它自己的实现其实很短，核心就是三个标记加一串转发。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">var _in_tree: bool = false</span><br><span class="line">var _has_initialized: bool = false</span><br><span class="line">var _has_destroyed: bool = false</span><br><span class="line"></span><br><span class="line">func enter_tree() -&gt; void:</span><br><span class="line">    if _has_destroyed: return</span><br><span class="line"></span><br><span class="line">    if !_in_tree:</span><br><span class="line">        _in_tree = true</span><br><span class="line">        host.call(&amp;&quot;_event_subscribe&quot;)</span><br><span class="line"></span><br><span class="line">func start() -&gt; void:</span><br><span class="line">    if _has_destroyed: return</span><br><span class="line"></span><br><span class="line">    if _has_initialized:</span><br><span class="line">        push_warning(&quot;[%s] 重复执行 start()&quot; % [_host_name])</span><br><span class="line">        return</span><br><span class="line">    _has_initialized = true</span><br><span class="line"></span><br><span class="line">    host.call(&amp;&quot;_initialize&quot;)</span><br></pre></td></tr></table></figure>
+
+<p><code>update</code>、<code>fixed_update</code>、<code>exit_tree</code> 的写法大同小异，都是先看 <code>_has_destroyed</code>，再做该做的事。
+把这些防御集中在一个地方，好处是所有宿主都自动获得，不用每个类都抄一遍。</p>
+<p>这里博主用了 <code>host.call(&amp;&quot;_xxx&quot;)</code> 这种字符串调用，而不是定义一个接口类去继承。
+好处是宿主不必再继承一层，<code>LifeCycle2D</code> 和 <code>LifeCycle3D</code> 都行，将来 <code>Control</code> 也行。
+代价是方法名写错了编辑器不会报错，要到运行时才会炸。
+这是这套设计里博主认为最需要小心的地方，改方法名的时候一定要全局搜一遍。</p>
+<h2 id="状态标记保证了什么"><a href="#状态标记保证了什么" class="headerlink" title="状态标记保证了什么"></a>状态标记保证了什么</h2><p><code>_in_tree</code>、<code>_has_initialized</code>、<code>_has_destroyed</code> 这三个标记不是装饰，它们各自挡住了一类问题。</p>
+<ul>
+<li><code>_in_tree</code>：挡住重复订阅。信号连两次，回调就会执行两次，这种 bug 在编辑器里几乎看不出来。</li>
+<li><code>_has_initialized</code>：挡住重复初始化。重复 <code>start()</code> 会 <code>push_warning</code>，因为这通常意味着框架里有人乱调用。</li>
+<li><code>_has_destroyed</code>：挡住「死后复活」。销毁之后再进来的任何调用都会被丢弃，包括 <code>update</code>。</li>
+</ul>
+<p>另外一个细节藏在 <code>destroy()</code> 里，顺序值得单独看看。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">func destroy() -&gt; void:</span><br><span class="line">    if _has_destroyed:</span><br><span class="line">        push_warning(&quot;[%s] 重复销毁&quot; % [_host_name])</span><br><span class="line">        return</span><br><span class="line">    _has_destroyed = true</span><br><span class="line"></span><br><span class="line">    if is_instance_valid(host):</span><br><span class="line">        if _in_tree:</span><br><span class="line">            _in_tree = false</span><br><span class="line">            host.call(&amp;&quot;_event_unsubscribe&quot;)</span><br><span class="line">        host.call(&amp;&quot;_before_destroyed&quot;)</span><br><span class="line"></span><br><span class="line">    _release_host()</span><br><span class="line">    host = null</span><br></pre></td></tr></table></figure>
+
+<p>它先把 <code>_has_destroyed</code> 置为 <code>true</code>，再回调宿主。
+这样即使宿主在 <code>_before_destroyed</code> 里做了什么奇怪的事，也不会再触发一轮销毁。
+而 <code>_in_tree</code> 的补充判断是为了兜底：万一对象没走过 <code>exit_tree</code> 就直接销毁，也必须把订阅断掉，否则又是一堆野回调。</p>
+<p>最后一句 <code>host = null</code> 是给非 Node 宿主用的。
+Node 宿主会被 <code>_release_host()</code> 处理掉，普通对象则靠这一句断开引用，不然 <code>RefCounted</code> 就漏了。</p>
+<h2 id="宿主是-Object，不是-Node"><a href="#宿主是-Object，不是-Node" class="headerlink" title="宿主是 Object，不是 Node"></a>宿主是 Object，不是 Node</h2><p><code>LifeCycleEntity.host</code> 的类型是 <code>Object</code>，不是 <code>Node</code>。
+这带来两个后果，一个好处一个麻烦。</p>
+<p>好处是任何对象都能当宿主，将来想让一个纯数据类也吃这套生命周期，不用先给它套个节点。
+麻烦则是「怎么把它放进场景树」这件事没法统一处理，只能判断。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">func attach(p_parent: Node) -&gt; void:</span><br><span class="line">    if host is Node: p_parent.add_child(host)</span><br></pre></td></tr></table></figure>
+
+<p>目前项目里所有宿主都是 <code>Node2D</code> 或 <code>Node3D</code>，走到 <code>attach</code> 的时候都会被挂上去。
+非 Node 宿主只是先留了口子，还没有真正的用例。</p>
+<h2 id="单例的缓存规范"><a href="#单例的缓存规范" class="headerlink" title="单例的缓存规范"></a>单例的缓存规范</h2><p>项目里几乎每个宿主都是单例，因为跨系统互相找的时候，一路 <code>get_node</code> 太痛苦了。
+博主在基类注释里把写法固定了下来，每个单例宿主都长这样。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">static var _cached_instance: GridManager = null</span><br><span class="line">static var cached_instance: GridManager:</span><br><span class="line">    get: return _cached_instance if is_instance_valid(_cached_instance) else null</span><br><span class="line"></span><br><span class="line">func _cache_instance() -&gt; bool:</span><br><span class="line">    if is_instance_valid(_cached_instance):</span><br><span class="line">        self.queue_free()</span><br><span class="line">        return false</span><br><span class="line"></span><br><span class="line">    _cached_instance = self</span><br><span class="line">    return true</span><br></pre></td></tr></table></figure>
+
+<p>拆开看是三个约定。</p>
+<ol>
+<li><code>cached_instance</code> 是对外暴露的只读入口，getter 里带 <code>is_instance_valid</code> 兜底，永远不返回野指针。</li>
+<li><code>_cache_instance()</code> 返回 <code>false</code> 表示「已经有老大在了」，后来者就把自己 <code>queue_free()</code> 掉。这样「唯一性」是靠自我了断实现的，不用在别处写判断。</li>
+<li><code>_before_destroyed</code> 里置空 <code>_cached_instance</code>。</li>
+</ol>
+<h2 id="谁来驱动这一切"><a href="#谁来驱动这一切" class="headerlink" title="谁来驱动这一切"></a>谁来驱动这一切</h2><p>阶段都定义好了，那谁按顺序去调它们？
+答案是 <code>LifeCycleController</code> 自己，它负责把 Godot 的节点回调翻译过来。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">func _enter_tree() -&gt; void:</span><br><span class="line">    for e in controller_entities:</span><br><span class="line">        e.enter_tree()</span><br><span class="line"></span><br><span class="line">func _ready() -&gt; void:</span><br><span class="line">    for e in controller_entities:</span><br><span class="line">        e.start()</span><br><span class="line"></span><br><span class="line">func _process(delta: float) -&gt; void:</span><br><span class="line">    for e in controller_entities:</span><br><span class="line">        e.update(delta)</span><br><span class="line"></span><br><span class="line">func _physics_process(fixed_delta: float) -&gt; void:</span><br><span class="line">    for e in controller_entities:</span><br><span class="line">        e.fixed_update(fixed_delta)</span><br><span class="line"></span><br><span class="line">func _exit_tree() -&gt; void:</span><br><span class="line">    for e in controller_entities:</span><br><span class="line">        e.exit_tree()</span><br><span class="line"></span><br><span class="line">func _notification(what: int) -&gt; void:</span><br><span class="line">    if what == NOTIFICATION_PREDELETE:</span><br><span class="line">        for e in controller_entities:</span><br><span class="line">            e.destroy()</span><br></pre></td></tr></table></figure>
+
+<p>这里有两处值得说。</p>
+<p>一是销毁用的是 <code>NOTIFICATION_PREDELETE</code>，而不是 <code>_exit_tree</code>。
+<code>_exit_tree</code> 只代表离开了场景树，对象本身还活着，甚至可能再被挂回来。
+只有 <code>NOTIFICATION_PREDELETE</code> 才是对象真正被回收前的最后一个时机，也才配得上「销毁」这个词。</p>
+<p>二是注册这件事放在 <code>_init</code> 里做，而不是 <code>_ready</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func _init() -&gt; void:</span><br><span class="line">    if !_cache_instance(): return</span><br><span class="line"></span><br><span class="line">    controller_entities.clear()</span><br><span class="line">    LifeCycleController.register_entities(controller_entities, controller_hosts)</span><br><span class="line">    LifeCycleController.add_child_through_entities(self, controller_entities)</span><br></pre></td></tr></table></figure>
+
+<p>因为 <code>LifeCycleEntity</code> 的构造函数会立刻回调 <code>_before_entity_instantiate</code>，而 <code>_enter_tree</code> 之前又必须把实体准备好，所以只能放在 <code>_init</code> 里。
+注意 <code>_cache_instance()</code> 的判断在前，这意味着一个「重复的控制器」不会注册任何实体，直接就退场了。</p>
+<p>至于控制器自己怎么被创建：<code>LifeCycleController</code> 是写在场景里的节点，<code>ManagerController</code> 和 <code>DebuggerController</code> 写在它的 <code>controller_hosts</code> 里，而更下层的管理器写在 <code>ManagerController</code> 的 <code>manager_hosts</code> 里。
+所以每个控制器只需要关心自己下一层的列表，层次关系一目了然。</p>
+<h2 id="尾声"><a href="#尾声" class="headerlink" title="尾声"></a>尾声</h2><p>到这一步，这套生命周期已经能撑起项目里所有的管理系统了。
+它做的事情其实很朴素：把「什么时候做什么」写死成六个阶段，再用三个标记把重复调用挡掉。
+换来的是一切都变得可预测——任何一个宿主，博主都能说出它在每一帧的哪个时刻被调用。</p>
+<p>当然它也不是没有代价。
+字符串调用换来的灵活性，代价是失去了编译期检查；单例换来的方便，代价是模块之间耦合得很深。
+这些取舍在项目当前这个规模下是划算的，但如果系统继续膨胀，单例那一层早晚要重新考虑。</p>
+<p>下一篇记录博主打算聊聊网格，也就是目前项目里唯一真正跑起来的东西。
+各位如果也在折腾自己的框架，不妨先从「生命周期到底分几步」这个问题开始想，答案不一定和博主一样，但想清楚的过程本身就是收获😉</p>
+
+                    
+                </div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                            <ul class="post-tags-box border-box">
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/Godot/">Godot</a>
+                                    </li>
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/GDScript/">GDScript</a>
+                                    </li>
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a>
+                                    </li>
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/%E8%82%89%E9%B8%BD/">肉鸽</a>
+                                    </li>
+                                
+                            </ul>
+                        
+                    </div>
+                    <div>
+                        
+                            <div class="post-share-container border-box">
+    <ul class="share-list-wrap border-box">
+        <li class="qq share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到 QQ"
+        >
+            <i class="fa-brands fa-qq"></i>
+        </li>
+        <li class="wechat share-item border-box flex-center tooltip tooltip-img"
+            data-tooltip-content="分享到微信"
+            data-tooltip-img-tip="微信扫一扫"
+            data-tooltip-img-style="background-color: #fff; top: -10px; padding: 0.6rem 0.6rem 0.1rem 0.6rem;"
+        >
+            <i class="fa-brands fa-weixin"></i>
+        </li>
+        <li class="weibo share-item border-box flex-center tooltip"
+            data-tooltip-content="分享到微博"
+        >
+            <i class="fa-brands fa-weibo"></i>
+        </li>
+    </ul>
+</div>
+
+                        
+                    </div>
+                </div>
+
+                
+                    
+
+<div class="reward-author-container border-box flex-center">
+    <div class="reward-btn border-box flex-center tooltip tooltip-img"
+            data-tooltip-img-url="/images/wechat.png"
+            data-tooltip-img-trigger="click"
+            data-tooltip-img-style="top: -6px;"
+    >
+        <i class="fa-solid fa-gift"></i>&nbsp;REWARD AUTHOR
+    </div>
+</div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                            <div class="prev-post">
+                                <a class="prev"
+                                   rel="prev"
+                                   href="/2026/10/07/godot-rogue-like-grid/"
+                                   title="Godot 肉鸽开发记录：搭一个自己的网格"
+                                >
+                                    <span class="left arrow-icon flex-center">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">Godot 肉鸽开发记录：搭一个自己的网格</span>
+                                        <span class="post-nav-item">上一篇</span>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2026/04/12/hermes-agent-installation-guide/"
+                                   title="Hermes Agent 安装与配置完整指南"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">Hermes Agent 安装与配置完整指南</span>
+                                        <span class="post-nav-item">下一篇</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc right-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">整体结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%98%B6%E6%AE%B5%E6%98%AF%E6%80%8E%E4%B9%88%E5%88%92%E5%88%86%E7%9A%84"><span class="nav-number">3.</span> <span class="nav-text">阶段是怎么划分的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#before-entity-instantiate"><span class="nav-number">3.1.</span> <span class="nav-text">_before_entity_instantiate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#event-subscribe"><span class="nav-number">3.2.</span> <span class="nav-text">_event_subscribe</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#initialize"><span class="nav-number">3.3.</span> <span class="nav-text">_initialize</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#update-%E4%B8%8E-fixed-update"><span class="nav-number">3.4.</span> <span class="nav-text">_update 与 _fixed_update</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#before-destroyed"><span class="nav-number">3.5.</span> <span class="nav-text">_before_destroyed</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%81%E5%9C%A8%E8%BD%AC%E5%8F%91%E8%BF%99%E4%BA%9B%E9%98%B6%E6%AE%B5"><span class="nav-number">4.</span> <span class="nav-text">谁在转发这些阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E6%A0%87%E8%AE%B0%E4%BF%9D%E8%AF%81%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">5.</span> <span class="nav-text">状态标记保证了什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%BF%E4%B8%BB%E6%98%AF-Object%EF%BC%8C%E4%B8%8D%E6%98%AF-Node"><span class="nav-number">6.</span> <span class="nav-text">宿主是 Object，不是 Node</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E4%BE%8B%E7%9A%84%E7%BC%93%E5%AD%98%E8%A7%84%E8%8C%83"><span class="nav-number">7.</span> <span class="nav-text">单例的缓存规范</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%81%E6%9D%A5%E9%A9%B1%E5%8A%A8%E8%BF%99%E4%B8%80%E5%88%87"><span class="nav-number">8.</span> <span class="nav-text">谁来驱动这一切</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%BE%E5%A3%B0"><span class="nav-number">9.</span> <span class="nav-text">尾声</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+    &copy;&nbsp;2026
+    
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">irmenth</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        由&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;驱动&nbsp;&&nbsp;主题&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+            <li class="tools-item tool-toggle-theme-mode flex-center">
+                <i class="fas fa-moon"></i>
+            </li>
+        
+
+        <!-- rss -->
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">整体结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%98%B6%E6%AE%B5%E6%98%AF%E6%80%8E%E4%B9%88%E5%88%92%E5%88%86%E7%9A%84"><span class="nav-number">3.</span> <span class="nav-text">阶段是怎么划分的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#before-entity-instantiate"><span class="nav-number">3.1.</span> <span class="nav-text">_before_entity_instantiate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#event-subscribe"><span class="nav-number">3.2.</span> <span class="nav-text">_event_subscribe</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#initialize"><span class="nav-number">3.3.</span> <span class="nav-text">_initialize</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#update-%E4%B8%8E-fixed-update"><span class="nav-number">3.4.</span> <span class="nav-text">_update 与 _fixed_update</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#before-destroyed"><span class="nav-number">3.5.</span> <span class="nav-text">_before_destroyed</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%81%E5%9C%A8%E8%BD%AC%E5%8F%91%E8%BF%99%E4%BA%9B%E9%98%B6%E6%AE%B5"><span class="nav-number">4.</span> <span class="nav-text">谁在转发这些阶段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E6%A0%87%E8%AE%B0%E4%BF%9D%E8%AF%81%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">5.</span> <span class="nav-text">状态标记保证了什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%BF%E4%B8%BB%E6%98%AF-Object%EF%BC%8C%E4%B8%8D%E6%98%AF-Node"><span class="nav-number">6.</span> <span class="nav-text">宿主是 Object，不是 Node</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E4%BE%8B%E7%9A%84%E7%BC%93%E5%AD%98%E8%A7%84%E8%8C%83"><span class="nav-number">7.</span> <span class="nav-text">单例的缓存规范</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%81%E6%9D%A5%E9%A9%B1%E5%8A%A8%E8%BF%99%E4%B8%80%E5%88%87"><span class="nav-number">8.</span> <span class="nav-text">谁来驱动这一切</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%BE%E5%A3%B0"><span class="nav-number">9.</span> <span class="nav-text">尾声</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+
+<div class="">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/post/toc.min.js"></script>
+        
+
+        <!-- copyright-info -->
+        
+
+        <!-- share -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.3.0/js/post/share.min.js"></script>
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+
+<!-- pjax -->
+
+
+
+    
+
+</body>
+</html>
