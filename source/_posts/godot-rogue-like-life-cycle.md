@@ -10,56 +10,64 @@ tags:
 
 ## 前言
 
-博主最近开了个新坑，打算用 Godot 做一款小体量的肉鸽游戏。
-项目目前还处在很基础的阶段，能跑起来的东西不多，摆在最前面的反而是地基。
-这篇记录想聊的就是这块地基里比较核心的一层：一套自己写的生命周期。
+博主最近在做一个肉鸽小游戏，引擎用 Godot，语言是 GDScript。
+项目还在很基础的阶段，真正跑起来的只有网格和它的调试绘制，其余的系统都还在往上搭。
+不过地基已经先铺了一层，这篇想聊的就是这层地基里最核心的部分：一套自己写的生命周期。
 
-Godot 自带的 `_ready`、`_process`、`_physics_process`、`_exit_tree` 其实已经够用。
-但项目一变大，博主就发现有三个问题会同时冒出来：初始化顺序靠人肉记忆、销毁时机靠自觉、同一套流程被复制很多遍。
-所以博主决定不去跟引擎对着干，而是在它上面套一层很薄的壳，把「什么时候该做什么」固定成契约。
+Godot 自带的钩子其实够用，`_ready` 初始化，`_process` 跑逻辑，`_exit_tree` 收尾。
+博主认为缺的不是钩子，而是一份约定。
+项目里的管理器是分层挂的，`LifeCycleController` 下面挂着 `ManagerController`，再下面是各个 Manager。
+没有约定的话，每个管理器什么时候初始化、什么时候断开信号、什么时候释放，就全靠写的人自觉。
+而顺序一旦靠自觉，跨层级的依赖就没法从代码里看出来。
+
+重复调用也是同一类问题。
+订阅和退订要成对，初始化只能跑一次，销毁之后不该再收到回调。
+这些判断如果让每个管理器自己写，会重复很多遍，也总有人会漏。
+
+上 autoload 是很自然的想法，博主觉得它只能解决「哪里都能拿到」，顺序和销毁还是没人管。
+
+所以博主决定把它们收拢到一处，做成一份写死的约定。
+
+代价也说在前面。
+转发靠字符串调用宿主的方法，方法名写错了编辑器不会提醒，要到运行时才知道。
+系统之间靠单例互相找，耦合比较重。
+不过在目前这个规模下，这套方案换来的确定性是划算的。
+真到了要还账的时候再拆也不迟。
 
 好了，闲言少叙，让我们开始吧！
 
-## 整体结构
+## 先把阶段定下来
 
-这层壳由三部分组成。
-
-- `LifeCycleEntity`：一个 `RefCounted` 的代理，持有宿主，负责记录状态并把调用转发给宿主。
-- `LifeCycle2D` / `LifeCycle3D`：宿主的抽象基类，声明需要重写的方法。
-- `LifeCycleController`：根控制器，负责注册实体并驱动它们。
-
-把它们串起来，目前项目里的结构大概是这样。
+钩子本身是够的，博主想要的是一条明确的线。
+把它们理顺之后，顺序是这样：
 
 ```text
-LifeCycleController
-├── ManagerController
-│   ├── GlobalEventManager
-│   ├── GridManager
-│   └── EnemySpawnManager
-└── DebuggerController
-    └── GridDrawer
+_before_entity_instantiate
+_event_subscribe
+_initialize
+_update / _fixed_update
+_event_unsubscribe
+_before_destroyed
 ```
 
-挂在场景上的节点里，只有 `LifeCycleController` 参与这套生命周期，剩下的控制器都是它自己 `new` 出来再注册进去的。
-换句话说，整个游戏里需要被生命周期管理的对象，都挂在这一棵树上。
+有几个地方是刻意分开的。
 
-## 阶段是怎么划分的
+订阅和初始化没有合并，是因为它们的时机不一样。
+订阅发生在对象进树的时候，这一步只连信号，不做别的。
+真正的初始化要等到所有对象都进树了，这时候去拿别的单例才安全。
 
-这套生命周期一共划分了六个阶段，调用顺序是固定的。
+退订和销毁也没有合并。
+对象可能先出树、过一会儿才被销毁，也可能压根没进过树就被销毁了。
+放在一起写，总有一种情况会漏掉。
 
-- `_before_entity_instantiate`：实体刚被构造出来，宿主拿到自己的实体的时刻。
-- `_event_subscribe`：连接信号、注册监听。
-- `_initialize`：真正的初始化，此时该在的东西都已经在树上了。
-- `_update` / `_fixed_update`：每帧与每物理帧。
-- `_event_unsubscribe`：断开订阅。
-- `_before_destroyed`：对象即将被释放前的最后一件事。
+至于 `_before_entity_instantiate`，它要更早一点，后面讲转发的时候会提到。
 
-下面逐个说说每个阶段放在哪里、为什么放在那里。
+## 用一个实体来转发
 
-### `_before_entity_instantiate`
+宿主自己不需要继承什么特殊的基类，只要把这几个方法实现出来就行。
+真正负责记录状态、按顺序回调的是一个小对象，叫 `LifeCycleEntity`。
 
-第一个阶段和 GDScript 的 `_init` 有关系。
-`LifeCycleEntity` 在自己的构造函数里会立刻回调宿主的 `_before_entity_instantiate`，并且把 `self` 传进去。
+它的构造函数里做的第一件事，就是回头把宿主叫醒。
 
 ```gdscript
 func _init(p_host: Object) -> void:
@@ -68,105 +76,17 @@ func _init(p_host: Object) -> void:
     host.call(&"_before_entity_instantiate", self)
 ```
 
-所以宿主在这个阶段要做的第一件事，就是把 `life_entity` 存下来：
+最后那句是字符串调用。
+好处是宿主不必再继承一层接口，`LifeCycle2D` 能用，`LifeCycle3D` 能用，将来想换成 `Control` 也行。
+代价是方法名写错了编辑器不会管，要到运行的时候才炸。
+博主觉得这是整套设计里最容易出事的地方，改方法名的时候一定要全局搜一遍。
 
-```gdscript
-func _before_entity_instantiate(p_entity: LifeCycleEntity) -> void:
-    life_entity = p_entity
-    self.name = &"GridManager"
-    if !_cache_instance(): return
-```
-
-这里博主顺手把「改名」和「缓存单例」也一起做了。
-原因是不管后面走不走得到 `_initialize`，这个对象的身份（名字、是不是那个唯一的单例）都得先确定下来。
-尤其是重复实例的情况，早点发现就能早点把自己干掉，不用白跑一遍初始化。
-
-顺带一提，这个阶段之所以不能塞进宿主自己的 `_init` 里，是因为宿主的 `_init` 在 `new()` 的瞬间就跑完了，那时候 `life_entity` 这个基类字段还是空的。
-由实体的构造函数回头来调用宿主，顺序才是对的。
-
-### `_event_subscribe`
-
-这一阶段只管把信号连上，断开交给对应的 `_event_unsubscribe`。
-以项目里的调试网格绘制器为例。
-
-```gdscript
-func _event_subscribe() -> void:
-    GlobalEventManager.cached_instance.main_camera_readied.connect(_cache_main_cam)
-
-func _event_unsubscribe() -> void:
-    GlobalEventManager.cached_instance.main_camera_readied.disconnect(_cache_main_cam)
-```
-
-连接和断开被拆成两个阶段，而不是塞进 `_ready` 和 `_exit_tree`。
-因为在这套生命周期里，离开树的时刻和销毁的时刻是两件事。
-对象可能先出树、过一会儿才被销毁，也可能压根没进过树就被销毁了，所以订阅和退订必须各自独立、并且成对出现。
-
-`_event_subscribe` 里直接用的是 `GlobalEventManager.cached_instance`，能不能拿到东西完全看注册顺序。
-也就是说，订阅阶段虽然只有一句 `connect`，但它其实已经被顺序约束住了：谁先被注册，谁就先连上信号。
-
-### `_initialize`
-
-真正的初始化放在这里。
-此时对象已经在树上了，拿单例、读配置、建数据都可以放心去做了。
-
-```gdscript
-func _initialize() -> void:
-    astar_grid = Grid.new(ASTAR_GRID_CONFIG.grid_size, ASTAR_GRID_CONFIG.origin, ASTAR_GRID_CONFIG.cell_radius)
-    astar_grid.init_grid()
-```
-
-这里有个很容易被忽略的点：`GridDrawer` 在初始化时要拿 `GridManager`，而这两个宿主并不在同一个控制器里。
-`GridManager` 归 `ManagerController` 管，`GridDrawer` 归 `DebuggerController` 管，所以顺序约束是跨层级的，最终由控制器列表和每一层的宿主列表共同决定。
-那两个 `Array` 不是随便排的，它是这套框架里唯一一份「谁先谁后」的声明。
-
-### `_update` 与 `_fixed_update`
-
-这两个阶段只是转发，宿主自己去实现真正的逻辑。
-需要注意的是 `_fixed_update` 走的是物理帧，跟 `_update` 不是同一个时间轴，别把需要稳帧的东西塞进 `_update`。
-
-项目里 `GridDrawer` 用它来做一件很有意思的事：只在相机移动过的时候才重新画一遍。
-
-```gdscript
-func _update(_delta: float) -> void:
-    if _cached_cam_pos.is_equal_approx(_main_cam.global_position): return
-
-    _cached_cam_pos = _main_cam.global_position
-    self.queue_redraw()
-```
-
-这个阶段还有一个隐藏约束：销毁之后的 `update` 会被静默跳过。
-也就是说宿主不需要在 `_update` 里自己判断「我是不是已经死了」。
-
-### `_before_destroyed`
-
-对象即将被释放前的最后一件事。
-单例宿主在这里做一件很关键的事，把自己的缓存置空。
-
-```gdscript
-func _before_destroyed() -> void:
-    if _cached_instance == self:
-        _cached_instance = null
-```
-
-如果不置空，静态变量就会一直指着一个已经被释放的对象。
-虽然 `cached_instance` 的 getter 里做了 `is_instance_valid` 判断兜底，但那是补救，不是设计。
-
-## 谁在转发这些阶段
-
-阶段是宿主实现的，但顺序和状态是 `LifeCycleEntity` 管的。
-它自己的实现其实很短，核心就是三个标记加一串转发。
+阶段分发出去之后，顺序和状态由实体自己把着。
 
 ```gdscript
 var _in_tree: bool = false
 var _has_initialized: bool = false
 var _has_destroyed: bool = false
-
-func enter_tree() -> void:
-    if _has_destroyed: return
-
-    if !_in_tree:
-        _in_tree = true
-        host.call(&"_event_subscribe")
 
 func start() -> void:
     if _has_destroyed: return
@@ -179,68 +99,33 @@ func start() -> void:
     host.call(&"_initialize")
 ```
 
-`update`、`fixed_update`、`exit_tree` 的写法大同小异，都是先看 `_has_destroyed`，再做该做的事。
-把这些防御集中在一个地方，好处是所有宿主都自动获得，不用每个类都抄一遍。
+这三个标记挡住的都是很具体的麻烦。
+`_in_tree` 挡重复订阅，信号连两次的话回调会跑两遍，这种 bug 在编辑器里几乎看不出来。
+`_has_initialized` 挡重复初始化，真的重复了会 `push_warning`，因为那通常意味着框架里有人在乱调用。
+`_has_destroyed` 挡的是「死而复生」，销毁之后再进来的调用一律丢掉，`update` 也不例外。
 
-这里博主用了 `host.call(&"_xxx")` 这种字符串调用，而不是定义一个接口类去继承。
-好处是宿主不必再继承一层，`LifeCycle2D` 和 `LifeCycle3D` 都行，将来 `Control` 也行。
-代价是方法名写错了编辑器不会报错，要到运行时才会炸。
-这是这套设计里博主认为最需要小心的地方，改方法名的时候一定要全局搜一遍。
+把这些判断集中在一个地方，宿主自己就不用每个方法都防一遍了。
 
-## 状态标记保证了什么
+## 宿主写起来是什么样
 
-`_in_tree`、`_has_initialized`、`_has_destroyed` 这三个标记不是装饰，它们各自挡住了一类问题。
-
-- `_in_tree`：挡住重复订阅。信号连两次，回调就会执行两次，这种 bug 在编辑器里几乎看不出来。
-- `_has_initialized`：挡住重复初始化。重复 `start()` 会 `push_warning`，因为这通常意味着框架里有人乱调用。
-- `_has_destroyed`：挡住「死后复活」。销毁之后再进来的任何调用都会被丢弃，包括 `update`。
-
-另外一个细节藏在 `destroy()` 里，顺序值得单独看看。
+用起来很简单，继承 `LifeCycle2D` 或者 `LifeCycle3D`，把需要的阶段实现出来。
+拿项目里的 `GridManager` 举例。
 
 ```gdscript
-func destroy() -> void:
-    if _has_destroyed:
-        push_warning("[%s] 重复销毁" % [_host_name])
-        return
-    _has_destroyed = true
+func _before_entity_instantiate(p_entity: LifeCycleEntity) -> void:
+    life_entity = p_entity
+    self.name = &"GridManager"
+    if !_cache_instance(): return
 
-    if is_instance_valid(host):
-        if _in_tree:
-            _in_tree = false
-            host.call(&"_event_unsubscribe")
-        host.call(&"_before_destroyed")
-
-    _release_host()
-    host = null
+func _initialize() -> void:
+    astar_grid = Grid.new(ASTAR_GRID_CONFIG.grid_size, ASTAR_GRID_CONFIG.origin, ASTAR_GRID_CONFIG.cell_radius)
+    astar_grid.init_grid()
 ```
 
-它先把 `_has_destroyed` 置为 `true`，再回调宿主。
-这样即使宿主在 `_before_destroyed` 里做了什么奇怪的事，也不会再触发一轮销毁。
-而 `_in_tree` 的补充判断是为了兜底：万一对象没走过 `exit_tree` 就直接销毁，也必须把订阅断掉，否则又是一堆野回调。
+第一个方法里顺手做了两件事，改名和缓存单例。
+缓存单例放在最前面是有意的，重复实例的时候要尽早把自己干掉，没必要白跑一遍初始化。
 
-最后一句 `host = null` 是给非 Node 宿主用的。
-Node 宿主会被 `_release_host()` 处理掉，普通对象则靠这一句断开引用，不然 `RefCounted` 就漏了。
-
-## 宿主是 Object，不是 Node
-
-`LifeCycleEntity.host` 的类型是 `Object`，不是 `Node`。
-这带来两个后果，一个好处一个麻烦。
-
-好处是任何对象都能当宿主，将来想让一个纯数据类也吃这套生命周期，不用先给它套个节点。
-麻烦则是「怎么把它放进场景树」这件事没法统一处理，只能判断。
-
-```gdscript
-func attach(p_parent: Node) -> void:
-    if host is Node: p_parent.add_child(host)
-```
-
-目前项目里所有宿主都是 `Node2D` 或 `Node3D`，走到 `attach` 的时候都会被挂上去。
-非 Node 宿主只是先留了口子，还没有真正的用例。
-
-## 单例的缓存规范
-
-项目里几乎每个宿主都是单例，因为跨系统互相找的时候，一路 `get_node` 太痛苦了。
-博主在基类注释里把写法固定了下来，每个单例宿主都长这样。
+单例的写法在项目里统一了起来。
 
 ```gdscript
 static var _cached_instance: GridManager = null
@@ -256,16 +141,17 @@ func _cache_instance() -> bool:
     return true
 ```
 
-拆开看是三个约定。
+`cached_instance` 是对外用的那个，取值的时候带一层 `is_instance_valid`，所以不会拿到已经被释放的对象。
+`_cache_instance()` 返回 `false`，意思就是「已经有老大在了」，后来者自己 `queue_free()`。
+唯一性靠这种方式保证，别处就不用再写判断。
 
-1. `cached_instance` 是对外暴露的只读入口，getter 里带 `is_instance_valid` 兜底，永远不返回野指针。
-2. `_cache_instance()` 返回 `false` 表示「已经有老大在了」，后来者就把自己 `queue_free()` 掉。这样「唯一性」是靠自我了断实现的，不用在别处写判断。
-3. `_before_destroyed` 里置空 `_cached_instance`。
+对应的，单例宿主在 `_before_destroyed` 里要把 `_cached_instance` 置空。
+不置空的话，静态变量会一直指着一个已经没了的对象。
 
-## 谁来驱动这一切
+## 谁来按顺序调用它们
 
-阶段都定义好了，那谁按顺序去调它们？
-答案是 `LifeCycleController` 自己，它负责把 Godot 的节点回调翻译过来。
+阶段定好了，宿主也写好了，剩下的问题是按什么顺序去调。
+这件事交给了 `LifeCycleController`，由它来把 Godot 的节点回调翻译过去。
 
 ```gdscript
 func _enter_tree() -> void:
@@ -279,53 +165,38 @@ func _ready() -> void:
 func _process(delta: float) -> void:
     for e in controller_entities:
         e.update(delta)
+```
 
-func _physics_process(fixed_delta: float) -> void:
-    for e in controller_entities:
-        e.fixed_update(fixed_delta)
+每帧的转发就是这几行的事，`_physics_process` 和 `_exit_tree` 也是同样的写法。
 
-func _exit_tree() -> void:
-    for e in controller_entities:
-        e.exit_tree()
+系统之间的先后顺序靠注册列表决定。
+`LifeCycleController` 里挂着 `ManagerController` 和 `DebuggerController`，`ManagerController` 里又挂着几个管理器。
+谁写在前面谁先初始化，仅此而已。
 
+这里有个容易忽略的地方：这个顺序是跨层级的。
+比如调试用的网格绘制器要拿 `GridManager`，但这两个宿主并不在同一个控制器里。
+所以那两个 `Array` 不是随便排的，它是整套框架里唯一一份「谁先谁后」的声明，改动的时候要看清楚。
+
+销毁这件事没法放在 `_exit_tree` 里做，得绕到 `_notification` 里去接。
+
+```gdscript
 func _notification(what: int) -> void:
     if what == NOTIFICATION_PREDELETE:
         for e in controller_entities:
             e.destroy()
 ```
 
-这里有两处值得说。
-
-一是销毁用的是 `NOTIFICATION_PREDELETE`，而不是 `_exit_tree`。
-`_exit_tree` 只代表离开了场景树，对象本身还活着，甚至可能再被挂回来。
+因为出树只代表离开了场景树，对象本身还活着，甚至可能再被挂回来。
 只有 `NOTIFICATION_PREDELETE` 才是对象真正被回收前的最后一个时机，也才配得上「销毁」这个词。
-
-二是注册这件事放在 `_init` 里做，而不是 `_ready`。
-
-```gdscript
-func _init() -> void:
-    if !_cache_instance(): return
-
-    controller_entities.clear()
-    LifeCycleController.register_entities(controller_entities, controller_hosts)
-    LifeCycleController.add_child_through_entities(self, controller_entities)
-```
-
-因为 `LifeCycleEntity` 的构造函数会立刻回调 `_before_entity_instantiate`，而 `_enter_tree` 之前又必须把实体准备好，所以只能放在 `_init` 里。
-注意 `_cache_instance()` 的判断在前，这意味着一个「重复的控制器」不会注册任何实体，直接就退场了。
-
-至于控制器自己怎么被创建：`LifeCycleController` 是写在场景里的节点，`ManagerController` 和 `DebuggerController` 写在它的 `controller_hosts` 里，而更下层的管理器写在 `ManagerController` 的 `manager_hosts` 里。
-所以每个控制器只需要关心自己下一层的列表，层次关系一目了然。
 
 ## 尾声
 
 到这一步，这套生命周期已经能撑起项目里所有的管理系统了。
-它做的事情其实很朴素：把「什么时候做什么」写死成六个阶段，再用三个标记把重复调用挡掉。
-换来的是一切都变得可预测——任何一个宿主，博主都能说出它在每一帧的哪个时刻被调用。
+它做的事情很朴素，把「什么时候做什么」写死成几个阶段，再用状态标记把重复调用挡掉。
+换来的是一切都变得可预测，任何一个宿主，博主都能说出它在每一帧的哪个时刻被调用。
 
-当然它也不是没有代价。
-字符串调用换来的灵活性，代价是失去了编译期检查；单例换来的方便，代价是模块之间耦合得很深。
-这些取舍在项目当前这个规模下是划算的，但如果系统继续膨胀，单例那一层早晚要重新考虑。
+代价前面也提过了，字符串调用和单例耦合都是要还的账。
+如果系统继续膨胀，单例那一层早晚要重新考虑。
 
 下一篇记录博主打算聊聊网格，也就是目前项目里唯一真正跑起来的东西。
 各位如果也在折腾自己的框架，不妨先从「生命周期到底分几步」这个问题开始想，答案不一定和博主一样，但想清楚的过程本身就是收获😉
