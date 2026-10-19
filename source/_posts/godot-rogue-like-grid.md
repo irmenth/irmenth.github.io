@@ -43,8 +43,8 @@ Godot 其实自带了 `TileMapLayer` 和 `AStarGrid2D`，一个本职是铺贴�
 另一个是 `cell_radius`，它其实是格子中心到边的距离，也就是半个边长。
 叫它半径有点随性，不过直径可以直接从它推出来。
 
-```gdscript
-cell_diameter = cr * 2
+```text
+cell_diameter = cell_radius * 2
 ```
 
 这三个约定记住了，后面的公式基本都能自己推。
@@ -54,59 +54,69 @@ cell_diameter = cr * 2
 配置放在一个 `Resource` 里，尺寸、原点、半径各一个字段，可以在编辑器里存成 `.tres` 文件，改数值不用碰代码。
 网格本体则只收构造参数，自己做初始化。
 
-博主没有用二维数组，而是把全部格子按行铺进一维数组里。
+博主没有用二维数组，而是把全部格子一列一列地铺进一维数组里。
 
-```gdscript
-for i in range(0, cell_amount, 1):
-    x = floori(i / grid_size.y)
-    y = i % grid_size.y
-    ws_offset.x = cell_radius + x * cell_diameter + origin.x
-    ws_offset.y = origin.y
-    ws_offset.z = cell_radius + y * cell_diameter + origin.z
-    linear_map.append(Cell.new(i, ws_offset))
+```text
+function build_cells(columns, rows)
+    total = columns * rows
+    cells = empty list
+
+    for index from 0 to total - 1
+        column = index / rows rounded down
+        row = index mod rows
+        center.x = origin.x + cell_radius + column * cell_diameter
+        center.y = origin.y
+        center.z = origin.z + cell_radius + row * cell_diameter
+        append cell(index, center) to cells
+
+    return cells
 ```
 
-这里 `i` 是数组下标，要反推出它落在第几行、行内第几个，其实就是「`i` 里包含了几整行」和「余下几个」。
-`x` 用整除拿行号，`y` 用取余拿行内偏移。
-注意除数是 `grid_size.y`，因为行是沿着 y 方向数的。
+这里 `index` 是格子在一维数组里的下标，要反推出它落在第几列、列内第几个，其实就是「`index` 里包含了几整列」和「余下几个」。
+`column` 用整除拿列号，`row` 用取余拿列内偏移。
+注意除数是 `rows`，因为格子是沿着行方向一个接一个排的。
 写反了不会报错，只会让整个网格的行列悄悄对调，是很容易埋很久的那种 bug。
 
 格子中心的计算可以拆开读。
-从原点出发，先走 `x` 个整格，再多走半个格子把自己挪到格子中间去。
-之所以用一维数组，是因为 `linear_map[i]` 可以直接拿到格子，不用写两层下标，后面遍历和洗牌也顺手。
+从原点出发，先走 `column` 个整格，再多走半个格子把自己挪到格子中间去。
+之所以用一维数组，是因为按 `index` 直接就能拿到格子，不用写两层下标，后面遍历和洗牌也顺手。
 
 ## 反过来查格子
 
 有了格子中心，再问「一个世界坐标落在哪个格子里」就顺理成章了。
 推导过程就是把刚才的公式倒过来。
 
-```gdscript
-func v3_to_cell(ws: Vector3) -> Vector2i:
-    var relative: Vector3 = ws - origin
-    if relative.x < 0 || relative.z < 0:
-        return Vector2i(-1, -1)
+```text
+function cell_at(world_position)
+    offset = world_position - origin
 
-    return Vector2i(floori(relative.x / cell_diameter), floori(relative.z / cell_diameter))
+    if offset.x < 0 or offset.z < 0
+        return invalid      # 最小角之外
+
+    column = offset.x / cell_diameter rounded down
+    row = offset.z / cell_diameter rounded down
+    return (column, row)
 ```
 
-先减掉 `origin` 把原点搬到网格的最小角，再除以 `cell_diameter`，得到的就是「跨了几个格子」。
-格子是从 0 开始编号的，所以结果取 `floori`，小数部分直接丢掉。
+先减掉 `origin` 把原点搬到网格的最小角，再除以格子边长，得到的就是「跨了几个格子」。
+格子是从 0 开始编号的，所以结果向下取整，小数部分直接丢掉。
 只有在跨过整整一格之后，编号才会加一。
 
-无效值用 `(-1, -1)` 表示，判断依据是减完原点之后有没有负数。
+无效值这里写成了 `invalid`，判断依据是减完原点之后有没有负数。
 
 **提醒**：目前只挡住了负方向，也就是最小角之外的部分。
 超出右下角的坐标不会被纠正，也不会报错，会老老实实返回一个越界的格子。
 这块等接上寻路之前得补上，不然查询一个远处的坐标就会拿到一个不存在的格子。
 
-`Vector2` 的版本就只是按约定映射过去，把二维坐标当成 XZ 来用。
+二维的版本就只是按约定映射过去，把平面坐标的 X 和 Y 当成世界的 X 和 Z 来用。
 
-```gdscript
-func v2_to_cell(ws: Vector2) -> Vector2i:
-    return v3_to_cell(Vector3(ws.x, 0, ws.y))
+```text
+function cell_at_2d(flat_position)
+    world_position = (flat_position.x, 0, flat_position.y)      # 高度不看，填 0
+    return cell_at(world_position)
 ```
 
-这里的 `y` 写死成 0 是安全的，因为查格子的时候压根不看高度。
+高度那一项写死成 0 是安全的，因为查格子的时候压根不看它。
 
 ## 让它显示出来
 
@@ -114,26 +124,32 @@ func v2_to_cell(ws: Vector2) -> Vector2i:
 它不生成任何贴图，也不摆 Sprite，直接在 `_draw` 里画线。
 先把网格的边界算出来。
 
-```gdscript
-var d: float = _grid.cell_diameter
-var min_x: float = _grid.origin.x
-var min_z: float = _grid.origin.z
-var max_x: float = _grid.origin.x + _grid.grid_size.x * d
-var max_z: float = _grid.origin.z + _grid.grid_size.y * d
+```text
+function grid_bounds()
+    cell_size = cell_diameter
+    min_x = origin.x
+    min_z = origin.z
+    max_x = origin.x + columns * cell_size
+    max_z = origin.z + rows * cell_size
+    return (min_x, min_z, max_x, max_z)
 ```
 
 边界算出来之后，平行 z 轴的线 x 坐标固定，平行 x 轴的线 z 坐标固定。
 循环次数都是「格子数 + 1」，因为线总比格子多一条，边界上那两条不能漏。
-这里借用了相机的 `unproject_position`，让它去做世界坐标到屏幕坐标的投影。
+这里借用了相机的投影函数，让它去做世界坐标到屏幕坐标的投影。
 
-```gdscript
-var screen_to_local: Transform2D = self.get_global_transform_with_canvas().affine_inverse()
+```text
+function to_local(world_point)
+    screen_point = camera.project(world_point)
+    return screen_point * inverse(canvas_transform)      # 屏幕坐标转回节点自身坐标
 
-_line_points.append(screen_to_local * _main_cam.unproject_position(Vector3(x, y, min_z)))
-_line_points.append(screen_to_local * _main_cam.unproject_position(Vector3(x, y, max_z)))
+function line_ends(x, min_z, max_z)
+    screen_a = to_local((x, y, min_z))
+    screen_b = to_local((x, y, max_z))
+    return (screen_a, screen_b)
 ```
 
-`Node2D` 的 `_draw` 本来就是在屏幕空间里作画的，所以拿到屏幕坐标之后，再乘上 `get_global_transform_with_canvas().affine_inverse()`，把坐标转回节点自己的局部坐标系。
+绘制节点本来就是在屏幕空间里作画的，所以拿到屏幕坐标之后，再乘上画布变换的逆矩阵，把坐标转回节点自己的局部坐标系。
 这样就不用自己推投影矩阵，相机的参数改了什么，网格会跟着一起变。
 
 **提醒**：这套算法只在正交投影下好看。
@@ -142,30 +158,35 @@ _line_points.append(screen_to_local * _main_cam.unproject_position(Vector3(x, y,
 
 相机什么时候就绪同样是通过事件通知的。
 
-```gdscript
-func _event_subscribe() -> void:
-    GlobalEventManager.cached_instance.main_camera_readied.connect(_cache_main_cam)
+```text
+function subscribe()
+    connect(main_camera_ready, cache_camera)
+
+function cache_camera(camera)
+    main_camera = camera
+    request_redraw()
 ```
 
 相机在场景里就被标成了 `current`，再由一个胶水节点在延迟一帧之后把它抛出来。
 绘制器收到之后缓存下相机对象，顺便请求一次重绘。
-订阅写在 `_event_subscribe`，退订写在 `_event_unsubscribe`，用的正是上一篇里那套生命周期。
+订阅放在进树那个阶段，退订放在出树那个阶段，用的正是上一篇里那套生命周期。
 
 ## 只在相机动的时候重绘
 
 画线本身的开销不大，但也没有必要每帧都画。
 网格只有在相机移动之后才会在屏幕上错位，所以博主把相机位置缓存了一份。
 
-```gdscript
-func _update(_delta: float) -> void:
-    if _cached_cam_pos.is_equal_approx(_main_cam.global_position): return
+```text
+function update(delta)
+    if almost_equal(main_camera.position, remembered_position)
+        return      # 相机没动，不用重绘
 
-    _cached_cam_pos = _main_cam.global_position
-    self.queue_redraw()
+    remembered_position = main_camera.position
+    request_redraw()
 ```
 
-用 `is_equal_approx` 而不是 `==`，是因为浮点位置几乎不会精确相等。
-`queue_redraw()` 只是请求一次重绘，真正画不画由引擎决定，但一直请求的话它会每帧都画。
+用近似比较而不是直接判相等，是因为浮点位置几乎不会一模一样。
+请求重绘只是排一次队，真正画不画由引擎决定，但一直请求的话它会每帧都画。
 
 ## 尾声
 

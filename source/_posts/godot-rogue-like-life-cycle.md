@@ -69,40 +69,42 @@ _before_destroyed
 
 它的构造函数里做的第一件事，就是回头把宿主叫醒。
 
-```gdscript
-func _init(p_host: Object) -> void:
-    host = p_host
-    _host_name = p_host.name if p_host is Node else p_host.get_class()
-    host.call(&"_before_entity_instantiate", self)
+```text
+function create_entity(host)
+    entity = new entity(host)
+    host.run_phase(before_instantiate, entity)      # 按名字调用，宿主不必继承接口
+    return entity
 ```
 
-最后那句是字符串调用。
+这里的调用是按名字查的，落在代码里就是一次字符串调用。
 好处是宿主不必再继承一层接口，`LifeCycle2D` 能用，`LifeCycle3D` 能用，将来想换成 `Control` 也行。
 代价是方法名写错了编辑器不会管，要到运行的时候才炸。
 博主觉得这是整套设计里最容易出事的地方，改方法名的时候一定要全局搜一遍。
 
 阶段分发出去之后，顺序和状态由实体自己把着。
 
-```gdscript
-var _in_tree: bool = false
-var _has_initialized: bool = false
-var _has_destroyed: bool = false
+```text
+entity state:
+    has_entered_tree = false
+    has_initialized = false
+    has_destroyed = false
 
-func start() -> void:
-    if _has_destroyed: return
-
-    if _has_initialized:
-        push_warning("[%s] 重复执行 start()" % [_host_name])
+function start(entity)
+    if entity.has_destroyed
         return
-    _has_initialized = true
 
-    host.call(&"_initialize")
+    if entity.has_initialized
+        warn("start called twice")
+        return
+
+    entity.has_initialized = true
+    entity.host.run_phase(initialize)
 ```
 
 这三个标记挡住的都是很具体的麻烦。
-`_in_tree` 挡重复订阅，信号连两次的话回调会跑两遍，这种 bug 在编辑器里几乎看不出来。
-`_has_initialized` 挡重复初始化，真的重复了会 `push_warning`，因为那通常意味着框架里有人在乱调用。
-`_has_destroyed` 挡的是「死而复生」，销毁之后再进来的调用一律丢掉，`update` 也不例外。
+`has_entered_tree` 挡重复订阅，信号连两次的话回调会跑两遍，这种 bug 在编辑器里几乎看不出来。
+`has_initialized` 挡重复初始化，真的重复了会打一条警告，因为那通常意味着框架里有人在乱调用。
+`has_destroyed` 挡的是「死而复生」，销毁之后再进来的调用一律丢掉，每帧更新也不例外。
 
 把这些判断集中在一个地方，宿主自己就不用每个方法都防一遍了。
 
@@ -111,15 +113,17 @@ func start() -> void:
 用起来很简单，继承 `LifeCycle2D` 或者 `LifeCycle3D`，把需要的阶段实现出来。
 拿项目里的 `GridManager` 举例。
 
-```gdscript
-func _before_entity_instantiate(p_entity: LifeCycleEntity) -> void:
-    life_entity = p_entity
-    self.name = &"GridManager"
-    if !_cache_instance(): return
+```text
+function before_instantiate(entity)
+    life_entity = entity
+    name = "GridManager"
 
-func _initialize() -> void:
-    astar_grid = Grid.new(ASTAR_GRID_CONFIG.grid_size, ASTAR_GRID_CONFIG.origin, ASTAR_GRID_CONFIG.cell_radius)
-    astar_grid.init_grid()
+    if not cache_instance()
+        return false      # 已经有老大在了，自己退出
+
+function initialize()
+    grid = build_grid(config.size, config.origin, config.cell_radius)
+    return grid
 ```
 
 第一个方法里顺手做了两件事，改名和缓存单例。
@@ -127,25 +131,21 @@ func _initialize() -> void:
 
 单例的写法在项目里统一了起来。
 
-```gdscript
-static var _cached_instance: GridManager = null
-static var cached_instance: GridManager:
-    get: return _cached_instance if is_instance_valid(_cached_instance) else null
-
-func _cache_instance() -> bool:
-    if is_instance_valid(_cached_instance):
-        self.queue_free()
+```text
+function cache_instance()
+    if is_valid(cached_instance)
+        release(self)
         return false
 
-    _cached_instance = self
+    cached_instance = self
     return true
 ```
 
-`cached_instance` 是对外用的那个，取值的时候带一层 `is_instance_valid`，所以不会拿到已经被释放的对象。
-`_cache_instance()` 返回 `false`，意思就是「已经有老大在了」，后来者自己 `queue_free()`。
+对外拿实例时，先判断缓存的实例还有没有效，无效就当空返回。
+缓存函数返回 `false`，意思就是「已经有老大在了」，后来者自己排队释放。
 唯一性靠这种方式保证，别处就不用再写判断。
 
-对应的，单例宿主在 `_before_destroyed` 里要把 `_cached_instance` 置空。
+对应的，单例宿主在销毁前要把缓存的那个实例置空。
 不置空的话，静态变量会一直指着一个已经没了的对象。
 
 ## 谁来按顺序调用它们
@@ -153,18 +153,18 @@ func _cache_instance() -> bool:
 阶段定好了，宿主也写好了，剩下的问题是按什么顺序去调。
 这件事交给了 `LifeCycleController`，由它来把 Godot 的节点回调翻译过去。
 
-```gdscript
-func _enter_tree() -> void:
-    for e in controller_entities:
-        e.enter_tree()
+```text
+function enter_tree()
+    for each entity in entities
+        entity.enter_tree()
 
-func _ready() -> void:
-    for e in controller_entities:
-        e.start()
+function ready()
+    for each entity in entities
+        entity.start()
 
-func _process(delta: float) -> void:
-    for e in controller_entities:
-        e.update(delta)
+function process(delta)
+    for each entity in entities
+        entity.update(delta)
 ```
 
 每帧的转发就是这几行的事，`_physics_process` 和 `_exit_tree` 也是同样的写法。
@@ -175,15 +175,15 @@ func _process(delta: float) -> void:
 
 这里有个容易忽略的地方：这个顺序是跨层级的。
 比如调试用的网格绘制器要拿 `GridManager`，但这两个宿主并不在同一个控制器里。
-所以那两个 `Array` 不是随便排的，它是整套框架里唯一一份「谁先谁后」的声明，改动的时候要看清楚。
+所以那两份注册列表不是随便排的，它是整套框架里唯一一份「谁先谁后」的声明，改动的时候要看清楚。
 
 销毁这件事没法放在 `_exit_tree` 里做，得绕到 `_notification` 里去接。
 
-```gdscript
-func _notification(what: int) -> void:
-    if what == NOTIFICATION_PREDELETE:
-        for e in controller_entities:
-            e.destroy()
+```text
+function on_notification(what)
+    if what == predelete
+        for each entity in entities
+            entity.destroy()
 ```
 
 因为出树只代表离开了场景树，对象本身还活着，甚至可能再被挂回来。
