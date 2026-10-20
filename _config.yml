@@ -113,3 +113,8 @@ search:
   field: post
   content: true
   format: striptags
+
+# Mermaid 流程图（由主题的内置支持加载渲染脚本）
+mermaid:
+  enable: true
+  version: "10.9.1"
