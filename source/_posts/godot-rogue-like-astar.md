@@ -228,14 +228,22 @@ function reset()
         state[cell] = unvisited
 ```
 
-```text
-unvisited             in heap              closed
-   0      ──push──>     1      ──pop──>     2
+```mermaid
+stateDiagram-v2
+    Unvisited: Unvisited (0)
+    InHeap: In heap (1)
+    Closed: Closed (2)
+
+    [*] --> Unvisited
+    Unvisited --> InHeap: push
+    InHeap --> Closed: pop
+    Closed --> InHeap: shorter path found
+    Closed --> [*]: reach destination
 ```
 
-被 closed 改回 in heap 的那条边，图上没有画，它只在发现更短路径时出现。
+状态值是 0、1、2，括号里就是落进 `state` 的那个数。
 
-出堆之后又发现更短的路径，就得把它从 2 改回 1，重新塞回堆里。
+closed 的格子还有一条回边：出堆之后又发现更短的路径，就得把它改回在堆里，重新塞回去。
 这在一般图里不常见，带权地形下却是会发生的。
 
 ## 主循环长什么样
@@ -244,28 +252,14 @@ unvisited             in heap              closed
 
 ```mermaid
 flowchart TD
-    A["find_path(start, dest)"] --> B["clear the heap<br/>reset every cell"]
-    B --> C["push start with walked cost 0<br/>estimate = distance to dest"]
-    C --> D{"heap empty?"}
-    D -- "yes" --> E["return an empty path"]
-    D -- "no" --> F["pop the top cell<br/>save it as closed"]
-    F --> G{"top cell is the dest?"}
-    G -- "yes" --> H["follow parents back<br/>return the path"]
-    G -- "no" --> I["try all 8 directions"]
-    I --> J{"target in grid<br/>and can step?"}
-    J -- "no" --> D
-    J -- "yes" --> K["new walked cost =<br/>current + step cost * move cost"]
-    K --> L{"what state is the neighbour in?"}
-    L -- "unvisited" --> M["push it<br/>mark as in the heap"]
-    L -- "in the heap" --> N{"new walked cost smaller?"}
-    N -- "yes" --> O["replace its walked cost and parent<br/>repair the heap"]
-    N -- "no" --> D
-    L -- "closed" --> P{"new walked cost<br/>beats the closed one?"}
-    P -- "yes" --> Q["push it again<br/>clear its closed result<br/>mark as in the heap"]
-    P -- "no" --> D
-    M --> D
-    O --> D
-    Q --> D
+    A["reset every cell<br/>push start"] --> B{"heap empty?"}
+    B -- "yes" --> C["return an empty path"]
+    B -- "no" --> D["take the cell with the smallest f"]
+    D --> E{"is it the destination?"}
+    E -- "yes" --> F["follow parents back<br/>return the path"]
+    E -- "no" --> G["try all 8 directions<br/>new walked cost = current + step * move cost"]
+    G --> H["update by state:<br/>unvisited / in heap / closed"]
+    H --> B
 ```
 
 整个循环里没有「找到终点再回头算」，终点一弹出就直接定案。

@@ -132,3 +132,4 @@ inject:
   css:
     - /css/custom.css
   js:
+    - /js/mermaid-theme.js
