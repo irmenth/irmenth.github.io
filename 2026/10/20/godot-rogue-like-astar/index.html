@@ -289,7 +289,7 @@
         
         
             <span class="meta-info-item post-wordcount">
-                <i class="icon fas fa-file-word"></i>&nbsp;<span>3.8k 字</span>
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>3.7k 字</span>
             </span>
         
         
@@ -404,7 +404,32 @@
 <p>出堆之后又发现更短的路径，就得把它从 2 改回 1，重新塞回堆里。
 这在一般图里不常见，带权地形下却是会发生的。</p>
 <h2 id="主循环长什么样"><a href="#主循环长什么样" class="headerlink" title="主循环长什么样"></a>主循环长什么样</h2><p>下面这张图把一次寻路的流程串起来。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    A[&quot;find_path(start, dest)&quot;] --&gt; B[&quot;clear the heap&lt;br/&gt;reset every cell&quot;]</span><br><span class="line">    B --&gt; C[&quot;push start with walked cost 0&lt;br/&gt;estimate = distance to dest&quot;]</span><br><span class="line">    C --&gt; D&#123;&quot;heap empty?&quot;&#125;</span><br><span class="line">    D -- &quot;yes&quot; --&gt; E[&quot;return an empty path&quot;]</span><br><span class="line">    D -- &quot;no&quot; --&gt; F[&quot;pop the top cell&lt;br/&gt;save it as closed&quot;]</span><br><span class="line">    F --&gt; G&#123;&quot;top cell is the dest?&quot;&#125;</span><br><span class="line">    G -- &quot;yes&quot; --&gt; H[&quot;follow parents back&lt;br/&gt;return the path&quot;]</span><br><span class="line">    G -- &quot;no&quot; --&gt; I[&quot;try all 8 directions&quot;]</span><br><span class="line">    I --&gt; J&#123;&quot;target in grid&lt;br/&gt;and can step?&quot;&#125;</span><br><span class="line">    J -- &quot;no&quot; --&gt; D</span><br><span class="line">    J -- &quot;yes&quot; --&gt; K[&quot;new walked cost =&lt;br/&gt;current + step cost * move cost&quot;]</span><br><span class="line">    K --&gt; L&#123;&quot;what state is the neighbour in?&quot;&#125;</span><br><span class="line">    L -- &quot;unvisited&quot; --&gt; M[&quot;push it&lt;br/&gt;mark as in the heap&quot;]</span><br><span class="line">    L -- &quot;in the heap&quot; --&gt; N&#123;&quot;new walked cost smaller?&quot;&#125;</span><br><span class="line">    N -- &quot;yes&quot; --&gt; O[&quot;replace its walked cost and parent&lt;br/&gt;repair the heap&quot;]</span><br><span class="line">    N -- &quot;no&quot; --&gt; D</span><br><span class="line">    L -- &quot;closed&quot; --&gt; P&#123;&quot;new walked cost&lt;br/&gt;beats the closed one?&quot;&#125;</span><br><span class="line">    P -- &quot;yes&quot; --&gt; Q[&quot;push it again&lt;br/&gt;clear its closed result&lt;br/&gt;mark as in the heap&quot;]</span><br><span class="line">    P -- &quot;no&quot; --&gt; D</span><br><span class="line">    M --&gt; D</span><br><span class="line">    O --&gt; D</span><br><span class="line">    Q --&gt; D</span><br></pre></td></tr></table></figure>
+<pre class="mermaid">
+flowchart TD
+    A["find_path(start, dest)"] --> B["clear the heap<br/>reset every cell"]
+    B --> C["push start with walked cost 0<br/>estimate = distance to dest"]
+    C --> D{"heap empty?"}
+    D -- "yes" --> E["return an empty path"]
+    D -- "no" --> F["pop the top cell<br/>save it as closed"]
+    F --> G{"top cell is the dest?"}
+    G -- "yes" --> H["follow parents back<br/>return the path"]
+    G -- "no" --> I["try all 8 directions"]
+    I --> J{"target in grid<br/>and can step?"}
+    J -- "no" --> D
+    J -- "yes" --> K["new walked cost =<br/>current + step cost * move cost"]
+    K --> L{"what state is the neighbour in?"}
+    L -- "unvisited" --> M["push it<br/>mark as in the heap"]
+    L -- "in the heap" --> N{"new walked cost smaller?"}
+    N -- "yes" --> O["replace its walked cost and parent<br/>repair the heap"]
+    N -- "no" --> D
+    L -- "closed" --> P{"new walked cost<br/>beats the closed one?"}
+    P -- "yes" --> Q["push it again<br/>clear its closed result<br/>mark as in the heap"]
+    P -- "no" --> D
+    M --> D
+    O --> D
+    Q --> D
+</pre>
+
 
 <p>整个循环里没有「找到终点再回头算」，终点一弹出就直接定案。
 这是 A* 的性质：堆顶的 <code>g + h</code> 最小，<code>h</code> 又不高估，那它出堆时的 <code>g</code> 就是最短的。</p>
@@ -804,6 +829,13 @@
 </div>
 
 <!-- mermaid -->
+
+    
+<script src="//cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+
+
+
+
 
 
 <!-- pjax -->
